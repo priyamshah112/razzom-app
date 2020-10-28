@@ -1,0 +1,20 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:razzom/screens/authentication/authentication.dart';
+import 'package:razzom/screens/home/home.dart';
+
+class Wrapper extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // ignore: deprecated_member_use
+    final user = Provider.of<User>(context);
+    print(user);
+    // return home or auth
+    if (user == null) {
+      return Authentication();
+    } else {
+      return Home();
+    }
+  }
+}
