@@ -2,8 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:razzom/screens/wrapper.dart';
-import 'package:razzom/services/auth.dart';
+import 'package:razzom/accounts/screens/wrapper.dart';
+import 'package:razzom/accounts/services/auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

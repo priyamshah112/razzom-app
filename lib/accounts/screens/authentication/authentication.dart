@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:razzom/screens/authentication/register.dart';
-import 'package:razzom/screens/authentication/signin.dart';
+import 'package:razzom/accounts/screens/authentication/register.dart';
+import 'package:razzom/accounts/screens/authentication/signin.dart';
 
 class Authentication extends StatefulWidget {
   @override

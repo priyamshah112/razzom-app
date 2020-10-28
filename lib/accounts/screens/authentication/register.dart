@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:razzom/screens/shared/loader.dart';
-import 'package:razzom/services/auth.dart';
-import 'package:razzom/screens/shared/constants.dart';
+import 'package:razzom/razzom/screens/shared/loader.dart';
+import 'package:razzom/accounts/services/auth.dart';
+import 'package:razzom/razzom/screens/shared/constants.dart';
 
 class Register extends StatefulWidget {
   final Function toggleView;

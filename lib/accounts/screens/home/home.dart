@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:razzom/services/auth.dart';
+import 'package:razzom/accounts/services/auth.dart';
 
 class Home extends StatelessWidget {
   final AuthService _auth = AuthService();
