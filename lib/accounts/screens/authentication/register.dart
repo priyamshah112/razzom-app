@@ -1,5 +1,6 @@
 import 'package:country_list_pick/country_list_pick.dart';
 import 'package:flutter/material.dart';
+import 'package:razzom/accounts/models/customUser.dart';
 import 'package:razzom/razzom/shared/screens/loader.dart';
 import 'package:razzom/accounts/services/auth.dart';
 import 'package:razzom/razzom/shared/screens/constants.dart';
@@ -14,18 +15,9 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
-  String name = "";
-  String phone = "";
-  String whatsapp = "";
-  String email = "";
-  String password = "";
-  String confirmPassword = "";
-  String userType = "";
-  String location = "";
-  String entrepreneurOffering = "";
-  String investorType = "";
-  String specify = "";
-  int funding;
+
+  CustomUser user = new CustomUser();
+
   String error = "";
   bool loading = false;
   bool entrepreneurOptions = false;
@@ -124,7 +116,7 @@ class _RegisterState extends State<Register> {
                                 val.isEmpty ? 'Enter name' : null,
                             onChanged: (val) {
                               setState(() {
-                                name = val;
+                                user.name = val;
                               });
                             },
                           ),
@@ -140,7 +132,7 @@ class _RegisterState extends State<Register> {
                                 : null,
                             onChanged: (val) {
                               setState(() {
-                                phone = val;
+                                user.phone = val;
                               });
                             },
                           ),
@@ -156,7 +148,7 @@ class _RegisterState extends State<Register> {
                                 : null,
                             onChanged: (val) {
                               setState(() {
-                                whatsapp = val;
+                                user.whatsapp = val;
                               });
                             },
                           ),
@@ -171,7 +163,7 @@ class _RegisterState extends State<Register> {
                                 val.isEmpty ? 'Enter an email' : null,
                             onChanged: (val) {
                               setState(() {
-                                email = val;
+                                user.email = val;
                               });
                             },
                           ),
@@ -188,7 +180,7 @@ class _RegisterState extends State<Register> {
                             obscureText: true,
                             onChanged: (val) {
                               setState(() {
-                                password = val;
+                                user.password = val;
                               });
                             },
                           ),
@@ -199,13 +191,13 @@ class _RegisterState extends State<Register> {
                             style: TextStyle(color: Colors.white),
                             decoration: textInputDecoration.copyWith(
                                 hintText: 'Confirm Password'),
-                            validator: (val) => password != val
+                            validator: (val) => user.password != val
                                 ? 'Passwords do not match'
                                 : null,
                             obscureText: true,
                             onChanged: (val) {
                               setState(() {
-                                confirmPassword = val;
+                                user.confirmPassword = val;
                               });
                             },
                           ),
@@ -241,10 +233,7 @@ class _RegisterState extends State<Register> {
                                   ),
                                   initialSelection: '+971',
                                   onChanged: (CountryCode code) {
-                                    print(code.name);
-                                    print(code.code);
-                                    print(code.dialCode);
-                                    print(code.flagUri);
+                                    user.location['country'] = code.code;
                                   },
                                 ),
                               ],
@@ -261,7 +250,7 @@ class _RegisterState extends State<Register> {
                                 val.isEmpty ? 'Enter your location' : null,
                             onChanged: (val) {
                               setState(() {
-                                location = val;
+                                user.location['city'] = val;
                               });
                             },
                           ),
@@ -283,7 +272,7 @@ class _RegisterState extends State<Register> {
                               FlatButton(
                                 color: Color(0xFF0C1A24),
                                 minWidth: 200,
-                                height: 50,
+                                height: 55,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(15.0),
                                   side: BorderSide(
@@ -292,7 +281,7 @@ class _RegisterState extends State<Register> {
                                 ),
                                 onPressed: () {
                                   print("Investor");
-                                  userType = "I";
+                                  user.userType = "I";
                                   setInvestorOptions();
                                 },
                                 child: Padding(
@@ -309,7 +298,7 @@ class _RegisterState extends State<Register> {
                               FlatButton(
                                 color: Color(0xFF0C1A24),
                                 minWidth: 200,
-                                height: 50,
+                                height: 55,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(15.0),
                                   side: BorderSide(
@@ -318,8 +307,9 @@ class _RegisterState extends State<Register> {
                                 ),
                                 onPressed: () {
                                   print("Entrepreneur");
-                                  userType = "E";
+                                  user.userType = "E";
                                   setEntrepreneurOptions();
+                                  print(new DateTime.now());
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(4.0),
@@ -366,7 +356,7 @@ class _RegisterState extends State<Register> {
                                     ),
                                   ),
                                   onPressed: () {
-                                    entrepreneurOffering = "SaaS";
+                                    user.entrepreneurOffering = "SaaS";
                                   },
                                   child: Padding(
                                     padding: const EdgeInsets.all(4.0),
@@ -387,7 +377,7 @@ class _RegisterState extends State<Register> {
                                     ),
                                   ),
                                   onPressed: () {
-                                    entrepreneurOffering = "Manufacturing";
+                                    user.entrepreneurOffering = "Manufacturing";
                                   },
                                   child: Padding(
                                     padding: const EdgeInsets.all(4.0),
@@ -408,7 +398,7 @@ class _RegisterState extends State<Register> {
                                     ),
                                   ),
                                   onPressed: () {
-                                    entrepreneurOffering = "Retail";
+                                    user.entrepreneurOffering = "Retail";
                                   },
                                   child: Padding(
                                     padding: const EdgeInsets.all(4.0),
@@ -429,7 +419,7 @@ class _RegisterState extends State<Register> {
                                     ),
                                   ),
                                   onPressed: () {
-                                    entrepreneurOffering = "Service";
+                                    user.entrepreneurOffering = "Service";
                                   },
                                   child: Padding(
                                     padding: const EdgeInsets.all(4.0),
@@ -450,7 +440,7 @@ class _RegisterState extends State<Register> {
                                     ),
                                   ),
                                   onPressed: () {
-                                    entrepreneurOffering = "Software";
+                                    user.entrepreneurOffering = "Software";
                                   },
                                   child: Padding(
                                     padding: const EdgeInsets.all(4.0),
@@ -471,7 +461,7 @@ class _RegisterState extends State<Register> {
                                     ),
                                   ),
                                   onPressed: () {
-                                    entrepreneurOffering = "Other";
+                                    user.entrepreneurOffering = "Other";
                                     toggleOtherSelected();
                                   },
                                   child: Padding(
@@ -513,7 +503,7 @@ class _RegisterState extends State<Register> {
                                     ),
                                   ),
                                   onPressed: () {
-                                    investorType = "Early-Stage/Angel";
+                                    user.investorType = "Early-Stage/Angel";
                                   },
                                   child: Padding(
                                     padding: const EdgeInsets.all(4.0),
@@ -534,7 +524,7 @@ class _RegisterState extends State<Register> {
                                     ),
                                   ),
                                   onPressed: () {
-                                    investorType = "Venture Capitalist";
+                                    user.investorType = "Venture Capitalist";
                                   },
                                   child: Padding(
                                     padding: const EdgeInsets.all(4.0),
@@ -555,7 +545,7 @@ class _RegisterState extends State<Register> {
                                     ),
                                   ),
                                   onPressed: () {
-                                    investorType = "Crowdfunder";
+                                    user.investorType = "Crowdfunder";
                                   },
                                   child: Padding(
                                     padding: const EdgeInsets.all(4.0),
@@ -576,7 +566,7 @@ class _RegisterState extends State<Register> {
                                     ),
                                   ),
                                   onPressed: () {
-                                    investorType = "Other";
+                                    user.investorType = "Other";
                                     toggleOtherSelected();
                                   },
                                   child: Padding(
@@ -631,7 +621,7 @@ class _RegisterState extends State<Register> {
                                     val.isEmpty ? 'Please specify' : null,
                                 onChanged: (val) {
                                   setState(() {
-                                    specify = val;
+                                    user.specify = val;
                                   });
                                 },
                               ),
@@ -673,7 +663,7 @@ class _RegisterState extends State<Register> {
                                 ],
                                 onChanged: (val) {
                                   setState(() {
-                                    funding = val;
+                                    user.funding = val;
                                   });
                                 },
                               ),
@@ -709,7 +699,7 @@ class _RegisterState extends State<Register> {
                                   ],
                                   onChanged: (val) {
                                     setState(() {
-                                      funding = val;
+                                      user.funding = val;
                                     });
                                   }),
                             ),
@@ -733,13 +723,13 @@ class _RegisterState extends State<Register> {
                                   fontWeight: FontWeight.bold),
                             ),
                             onPressed: () async {
+                              print(user);
                               if (_formKey.currentState.validate()) {
                                 setState(() {
                                   loading = true;
                                 });
-                                dynamic result =
-                                    await _auth.registerWithEmailAndPassword(
-                                        email, password);
+                                dynamic result = await _auth
+                                    .registerWithEmailAndPassword(user);
                                 if (result == null) {
                                   setState(() {
                                     error = "ERROR";
@@ -765,7 +755,7 @@ class _RegisterState extends State<Register> {
                             },
                             child: RichText(
                               text: TextSpan(
-                                text: 'Already a member? ',
+                                text: 'Already a user? ',
                                 style: TextStyle(
                                     color: Colors.black, fontSize: 15),
                                 children: <TextSpan>[
@@ -793,34 +783,3 @@ class _RegisterState extends State<Register> {
     }
   }
 }
-
-// TextFormField(
-//                 style: TextStyle(
-//                   color: Color(0xFFFFFFFF),
-//                 ),
-//                 decoration: InputDecoration(
-//                   hintText: 'Name',
-//                   hintStyle: TextStyle(
-//                     color: Color(0xFFFFFFFF),
-//                   ),
-//                   fillColor: Color(0xFF0C1A24),
-//                   filled: true,
-//                   border: OutlineInputBorder(
-//                     borderSide: BorderSide(
-//                       color: Color(0xFF0C1A24),
-//                     ),
-//                     borderRadius: const BorderRadius.all(
-//                       const Radius.circular(20.0),
-//                     ),
-//                   ),
-//                   focusedBorder: OutlineInputBorder(
-//                     borderSide: BorderSide(
-//                       color: Color(0xFF0C1A24),
-//                     ),
-//                     borderRadius: const BorderRadius.all(
-//                       const Radius.circular(20.0),
-//                     ),
-//                   ),
-//                 ),
-//                 textInputAction: TextInputAction.next,
-//               ),

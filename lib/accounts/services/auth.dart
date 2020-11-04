@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:razzom/accounts/models/customUser.dart';
 import 'package:razzom/accounts/services/database.dart';
 
 class AuthService {
@@ -24,12 +25,11 @@ class AuthService {
   }
 
   // register with email and password
-  Future registerWithEmailAndPassword(String email, String password) async {
+  Future registerWithEmailAndPassword(CustomUser user) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
-      await DatabaseService(uid: result.user.uid).updateUserData(
-          'Mihir', '89798789', '879879', 'mihir.mg2@somaiya.edu');
+          email: user.email, password: user.password);
+      await DatabaseService(uid: result.user.uid).createUserData(user);
       return result.user;
     } catch (e) {
       print(e.toString());

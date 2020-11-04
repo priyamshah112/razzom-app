@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:razzom/razzom/shared/screens/constants.dart';
 import 'package:razzom/razzom/shared/screens/loader.dart';
 import 'package:razzom/accounts/services/auth.dart';
 
@@ -36,78 +37,164 @@ class _SignInState extends State<SignIn> {
           backgroundColor: Color(0xFF0C1A24),
         ),
         body: Container(
-          padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
-          child: Form(
-            key: _formKey,
+          padding: EdgeInsets.symmetric(vertical: 50.0, horizontal: 30.0),
+          child: SingleChildScrollView(
             child: Column(
               children: [
-                SizedBox(
-                  height: 20.0,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      child: Column(
+                        children: [
+                          Image.asset(
+                            'assets/images/logo2.png',
+                          ),
+                          Text(
+                            'razzom.com',
+                            style: TextStyle(
+                              color: Color(0xFF0CE5DF),
+                              fontSize: 50,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            'Connect.Empower.Grow.',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 22,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                TextFormField(
-                  validator: (val) => val.isEmpty ? 'Enter an email' : null,
-                  onChanged: (val) {
-                    setState(() {
-                      email = val;
-                    });
-                  },
-                ),
-                SizedBox(
-                  height: 20.0,
-                ),
-                TextFormField(
-                  validator: (val) => val.length < 6
-                      ? 'Enter an password 6+ characters long'
-                      : null,
-                  obscureText: true,
-                  onChanged: (val) {
-                    setState(() {
-                      password = val;
-                    });
-                  },
-                ),
-                SizedBox(
-                  height: 20.0,
-                ),
-                RaisedButton(
-                  color: Colors.pink[400],
-                  child: Text(
-                    'Sign in',
-                    style: TextStyle(color: Colors.white),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                  child: Form(
+                    key: _formKey,
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: 16.0,
+                          ),
+                          TextFormField(
+                            style: TextStyle(color: Colors.white),
+                            decoration:
+                                textInputDecoration.copyWith(hintText: 'Email'),
+                            validator: (val) =>
+                                val.isEmpty ? 'Enter an email' : null,
+                            onChanged: (val) {
+                              setState(() {
+                                email = val;
+                              });
+                            },
+                          ),
+                          SizedBox(
+                            height: 16.0,
+                          ),
+                          TextFormField(
+                            style: TextStyle(color: Colors.white),
+                            decoration: textInputDecoration.copyWith(
+                                hintText: 'Password'),
+                            validator: (val) => val.length < 6
+                                ? 'Enter an password 6+ characters long'
+                                : null,
+                            obscureText: true,
+                            onChanged: (val) {
+                              setState(() {
+                                password = val;
+                              });
+                            },
+                          ),
+                          SizedBox(
+                            height: 20.0,
+                          ),
+                          RaisedButton(
+                            color: Color(0xFF0CE5DF),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.0),
+                              side: BorderSide(
+                                color: Color(0xFF0CE5DF),
+                              ),
+                            ),
+                            child: Text(
+                              'Sign In',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            onPressed: () async {
+                              if (_formKey.currentState.validate()) {
+                                setState(() {
+                                  loading = true;
+                                });
+                                dynamic result =
+                                    await _auth.signInWithEmailAndPassword(
+                                        email, password);
+                                print("signin");
+                                if (result == null) {
+                                  setState(() {
+                                    error = "ERROR";
+                                    loading = false;
+                                  });
+                                }
+                              }
+                            },
+                          ),
+                          SizedBox(
+                            height: 10.0,
+                          ),
+                          Text(
+                            error,
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 10.0,
+                            ),
+                          ),
+                          FlatButton(
+                            onPressed: () {
+                              widget.toggleView();
+                            },
+                            child: RichText(
+                              text: TextSpan(
+                                text: 'Not a user? ',
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 15),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: 'Sign Up',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  TextSpan(text: ' here.'),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  'assets/images/google.png',
+                                  scale: 2,
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
                   ),
-                  onPressed: () async {
-                    if (_formKey.currentState.validate()) {
-                      setState(() {
-                        loading = true;
-                      });
-                      dynamic result = await _auth.signInWithEmailAndPassword(
-                          email, password);
-                      print("signin");
-                      if (result == null) {
-                        setState(() {
-                          error = "ERROR";
-                          loading = false;
-                        });
-                      }
-                    }
-                  },
                 ),
-                SizedBox(
-                  height: 12.0,
-                ),
-                Text(
-                  error,
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontSize: 10.0,
-                  ),
-                ),
-                FlatButton(
-                  onPressed: () {
-                    widget.toggleView();
-                  },
-                  child: Text('Register here'),
-                )
               ],
             ),
           ),
@@ -116,34 +203,3 @@ class _SignInState extends State<SignIn> {
     }
   }
 }
-
-// TextFormField(
-//                 style: TextStyle(
-//                   color: Color(0xFFFFFFFF),
-//                 ),
-//                 decoration: InputDecoration(
-//                   hintText: 'Name',
-//                   hintStyle: TextStyle(
-//                     color: Color(0xFFFFFFFF),
-//                   ),
-//                   fillColor: Color(0xFF0C1A24),
-//                   filled: true,
-//                   border: OutlineInputBorder(
-//                     borderSide: BorderSide(
-//                       color: Color(0xFF0C1A24),
-//                     ),
-//                     borderRadius: const BorderRadius.all(
-//                       const Radius.circular(20.0),
-//                     ),
-//                   ),
-//                   focusedBorder: OutlineInputBorder(
-//                     borderSide: BorderSide(
-//                       color: Color(0xFF0C1A24),
-//                     ),
-//                     borderRadius: const BorderRadius.all(
-//                       const Radius.circular(20.0),
-//                     ),
-//                   ),
-//                 ),
-//                 textInputAction: TextInputAction.next,
-//               ),
