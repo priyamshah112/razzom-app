@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:razzom/razzom/screens/shared/loader.dart';
+import 'package:razzom/razzom/shared/screens/loader.dart';
 import 'package:razzom/accounts/services/auth.dart';
 
 class SignIn extends StatefulWidget {

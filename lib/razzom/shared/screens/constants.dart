@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 const textInputDecoration = InputDecoration(
+  isDense: true,
   hintStyle: TextStyle(
     color: Color(0xFFFFFFFF),
   ),

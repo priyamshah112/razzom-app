@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:razzom/accounts/services/database.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -27,6 +28,8 @@ class AuthService {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
+      await DatabaseService(uid: result.user.uid).updateUserData(
+          'Mihir', '89798789', '879879', 'mihir.mg2@somaiya.edu');
       return result.user;
     } catch (e) {
       print(e.toString());
