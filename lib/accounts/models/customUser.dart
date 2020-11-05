@@ -6,7 +6,7 @@ class CustomUser {
   String password = "";
   String confirmPassword = "";
   String userType = "";
-  Map location = {'city': "", 'country': ""};
+  Map location = {'city': "", 'country': "United Arab Emirates"};
   String entrepreneurOffering = "";
   String investorType = "";
   String specify = "";

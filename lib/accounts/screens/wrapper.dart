@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:razzom/accounts/screens/authentication/authentication.dart';
 import 'package:razzom/accounts/screens/home/home.dart';
+import 'package:razzom/accounts/screens/home/info1.dart';
+import 'package:razzom/razzom/shared/data/vars.dart';
 
 class Wrapper extends StatelessWidget {
   @override
@@ -12,8 +14,14 @@ class Wrapper extends StatelessWidget {
     print(user);
     // return home or auth
     if (user == null) {
-      return Authentication();
+      if (showInfoScreens) {
+        return Info1();
+      } else {
+        return Authentication();
+      }
     } else {
+      showInfoScreens = false;
+      print("HOME");
       return Home();
     }
   }
