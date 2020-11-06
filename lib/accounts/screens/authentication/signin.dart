@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:razzom/razzom/shared/data/vars.dart';
 import 'package:razzom/razzom/shared/screens/constants.dart';
 import 'package:razzom/razzom/shared/screens/loader.dart';
 import 'package:razzom/accounts/services/auth.dart';
@@ -13,7 +14,6 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
-  bool loading = false;
   String email = "";
   String password = "";
   String error = "";
@@ -143,6 +143,9 @@ class _SignInState extends State<SignIn> {
                                     error = "ERROR";
                                     loading = false;
                                   });
+                                  setState(() {
+                                    loading = false;
+                                  });
                                 }
                               }
                             },
@@ -184,13 +187,29 @@ class _SignInState extends State<SignIn> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 InkWell(
-                                  // onTap: signInWithGoogle(),
+                                  onTap: () async {
+                                    setState(() {
+                                      loading = true;
+                                    });
+                                    dynamic result =
+                                        await _auth.signInWithGoogle();
+                                    print("RESULT: " + result.toString());
+                                    if (result == null) {
+                                      setState(() {
+                                        error = "ERROR";
+                                        loading = false;
+                                      });
+                                    }
+                                  },
                                   child: Container(
                                     child: Image.asset(
                                       'assets/images/google.png',
                                       scale: 2,
                                     ),
                                   ),
+                                ),
+                                SizedBox(
+                                  height: 10.0,
                                 ),
                               ],
                             ),

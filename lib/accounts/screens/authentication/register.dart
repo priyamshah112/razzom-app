@@ -2,6 +2,7 @@ import 'package:country_list_pick/country_list_pick.dart';
 import 'package:flutter/material.dart';
 import 'package:razzom/accounts/models/customUser.dart';
 import 'package:razzom/razzom/shared/data/lists.dart';
+import 'package:razzom/razzom/shared/data/vars.dart';
 import 'package:razzom/razzom/shared/screens/loader.dart';
 import 'package:razzom/accounts/services/auth.dart';
 import 'package:razzom/razzom/shared/screens/constants.dart';
@@ -20,7 +21,6 @@ class _RegisterState extends State<Register> {
   CustomUser user = new CustomUser();
 
   String error = "";
-  bool loading = false;
   bool entrepreneurOptions = false;
   bool investorOptions = false;
   bool userTypeSelected = false;
@@ -493,7 +493,11 @@ class _RegisterState extends State<Register> {
                                     val.isEmpty ? 'Please specify' : null,
                                 onChanged: (val) {
                                   setState(() {
-                                    user.specify = val;
+                                    if (user.userType == "Entrepreneur") {
+                                      user.entrepreneurOffering = val;
+                                    } else {
+                                      user.investorType = val;
+                                    }
                                   });
                                 },
                               ),
@@ -596,6 +600,9 @@ class _RegisterState extends State<Register> {
                                     loading = false;
                                   });
                                 }
+                                setState(() {
+                                  loading = false;
+                                });
                               }
                             },
                           ),

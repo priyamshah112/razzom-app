@@ -13,6 +13,7 @@ class DatabaseService {
       FirebaseFirestore.instance.collection('investor');
 
   Future createUserData(CustomUser user) async {
+    print("reached db start");
     var createdOn = new DateTime.now();
     userCollection.doc(uid).set({
       'uid': uid,
@@ -46,6 +47,7 @@ class DatabaseService {
         'deleted_on': null,
       });
     } else if (user.userType == "Investor") {
+      print("reached investor db");
       return await investorCollection.doc(uid).set({
         'name': user.name,
         'phone_no': user.phone,

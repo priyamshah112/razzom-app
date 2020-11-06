@@ -21,8 +21,14 @@ class Wrapper extends StatelessWidget {
       }
     } else {
       showInfoScreens = false;
-      print("HOME");
-      return Home();
+      if (user.emailVerified) {
+        print("HOME");
+        return Home();
+      } else {
+        showSignIn = true;
+        print("Email not verified");
+        return Authentication();
+      }
     }
   }
 }
