@@ -183,9 +183,14 @@ class _SignInState extends State<SignIn> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Image.asset(
-                                  'assets/images/google.png',
-                                  scale: 2,
+                                InkWell(
+                                  // onTap: signInWithGoogle(),
+                                  child: Container(
+                                    child: Image.asset(
+                                      'assets/images/google.png',
+                                      scale: 2,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),

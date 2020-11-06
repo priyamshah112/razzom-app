@@ -1,6 +1,7 @@
 import 'package:country_list_pick/country_list_pick.dart';
 import 'package:flutter/material.dart';
 import 'package:razzom/accounts/models/customUser.dart';
+import 'package:razzom/razzom/shared/data/lists.dart';
 import 'package:razzom/razzom/shared/screens/loader.dart';
 import 'package:razzom/accounts/services/auth.dart';
 import 'package:razzom/razzom/shared/screens/constants.dart';
@@ -26,9 +27,11 @@ class _RegisterState extends State<Register> {
   bool otherSelected = false;
 
   void setEntrepreneurOptions() {
+    print(user.location['country']);
     setState(() {
       entrepreneurOptions = !entrepreneurOptions;
       investorOptions = false;
+      otherSelected = false;
     });
   }
 
@@ -36,6 +39,7 @@ class _RegisterState extends State<Register> {
     setState(() {
       investorOptions = !investorOptions;
       entrepreneurOptions = false;
+      otherSelected = false;
     });
   }
 
@@ -233,7 +237,8 @@ class _RegisterState extends State<Register> {
                                   ),
                                   initialSelection: '+971',
                                   onChanged: (CountryCode code) {
-                                    user.location['country'] = code.code;
+                                    user.location['country'] = code.name;
+                                    print(user.location['country']);
                                   },
                                 ),
                               ],
@@ -270,25 +275,34 @@ class _RegisterState extends State<Register> {
                             alignment: MainAxisAlignment.center,
                             children: [
                               FlatButton(
-                                color: Color(0xFF0C1A24),
+                                color: investorOptions
+                                    ? Color(0xFF0CE5DF)
+                                    : Color(0xFF0C1A24),
                                 minWidth: 200,
                                 height: 55,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(15.0),
                                   side: BorderSide(
-                                    color: Color(0xFF0C1A24),
+                                    color: investorOptions
+                                        ? Color(0xFF0CE5DF)
+                                        : Color(0xFF0C1A24),
                                   ),
                                 ),
                                 onPressed: () {
                                   print("Investor");
-                                  user.userType = "I";
+                                  user.userType = "Investor";
                                   setInvestorOptions();
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(4.0),
                                   child: Text(
                                     'I am here to invest',
-                                    style: TextStyle(fontSize: 15),
+                                    style: TextStyle(
+                                      color: investorOptions
+                                          ? Colors.black
+                                          : Colors.white,
+                                      fontSize: 15,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -296,26 +310,34 @@ class _RegisterState extends State<Register> {
                                 height: 8.0,
                               ),
                               FlatButton(
-                                color: Color(0xFF0C1A24),
+                                color: entrepreneurOptions
+                                    ? Color(0xFF0CE5DF)
+                                    : Color(0xFF0C1A24),
                                 minWidth: 200,
                                 height: 55,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(15.0),
                                   side: BorderSide(
-                                    color: Color(0xFF0C1A24),
+                                    color: entrepreneurOptions
+                                        ? Color(0xFF0CE5DF)
+                                        : Color(0xFF0C1A24),
                                   ),
                                 ),
                                 onPressed: () {
                                   print("Entrepreneur");
-                                  user.userType = "E";
+                                  user.userType = "Entrepreneur";
                                   setEntrepreneurOptions();
-                                  print(new DateTime.now());
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.all(4.0),
                                   child: Text(
                                     'I am here to raise funds',
-                                    style: TextStyle(fontSize: 15),
+                                    style: TextStyle(
+                                      color: entrepreneurOptions
+                                          ? Colors.black
+                                          : Colors.white,
+                                      fontSize: 15,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -341,138 +363,42 @@ class _RegisterState extends State<Register> {
                           ),
                           Visibility(
                             visible: entrepreneurOptions,
-                            child: ButtonBar(
-                              mainAxisSize: MainAxisSize.min,
-                              alignment: MainAxisAlignment.center,
-                              children: [
-                                FlatButton(
-                                  color: Color(0xFF0C1A24),
-                                  minWidth: 130,
-                                  height: 40,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    side: BorderSide(
-                                      color: Color(0xFF0C1A24),
-                                    ),
+                            child: SizedBox(
+                              height: 8.0,
+                            ),
+                          ),
+                          Visibility(
+                            visible: entrepreneurOptions,
+                            child: Container(
+                              width: 250,
+                              child: DropdownButtonFormField(
+                                  isDense: true,
+                                  hint: Text(
+                                    'Select...',
+                                    style: TextStyle(color: Colors.white),
                                   ),
-                                  onPressed: () {
-                                    user.entrepreneurOffering = "SaaS";
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: Text(
-                                      'SaaS',
-                                      style: TextStyle(fontSize: 15),
-                                    ),
-                                  ),
-                                ),
-                                FlatButton(
-                                  color: Color(0xFF0C1A24),
-                                  minWidth: 130,
-                                  height: 40,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    side: BorderSide(
-                                      color: Color(0xFF0C1A24),
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    user.entrepreneurOffering = "Manufacturing";
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: Text(
-                                      'Manufacturing',
-                                      style: TextStyle(fontSize: 15),
-                                    ),
-                                  ),
-                                ),
-                                FlatButton(
-                                  color: Color(0xFF0C1A24),
-                                  minWidth: 130,
-                                  height: 40,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    side: BorderSide(
-                                      color: Color(0xFF0C1A24),
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    user.entrepreneurOffering = "Retail";
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: Text(
-                                      'Retail',
-                                      style: TextStyle(fontSize: 15),
-                                    ),
-                                  ),
-                                ),
-                                FlatButton(
-                                  color: Color(0xFF0C1A24),
-                                  minWidth: 130,
-                                  height: 40,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    side: BorderSide(
-                                      color: Color(0xFF0C1A24),
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    user.entrepreneurOffering = "Service";
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: Text(
-                                      'Service',
-                                      style: TextStyle(fontSize: 15),
-                                    ),
-                                  ),
-                                ),
-                                FlatButton(
-                                  color: Color(0xFF0C1A24),
-                                  minWidth: 130,
-                                  height: 40,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    side: BorderSide(
-                                      color: Color(0xFF0C1A24),
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    user.entrepreneurOffering = "Software";
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: Text(
-                                      'Software',
-                                      style: TextStyle(fontSize: 15),
-                                    ),
-                                  ),
-                                ),
-                                FlatButton(
-                                  color: Color(0xFF0C1A24),
-                                  minWidth: 130,
-                                  height: 40,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    side: BorderSide(
-                                      color: Color(0xFF0C1A24),
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    user.entrepreneurOffering = "Other";
-                                    toggleOtherSelected();
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: Text(
-                                      'Other',
-                                      style: TextStyle(fontSize: 15),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                                  dropdownColor: Color(0xFF0C1A24),
+                                  decoration: textInputDecoration,
+                                  items: ENTREPRENEUR_TYPES.map((type) {
+                                    return DropdownMenuItem(
+                                      value: type,
+                                      child: Text(
+                                        '$type',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    );
+                                  }).toList(),
+                                  onChanged: (val) {
+                                    setState(() {
+                                      user.entrepreneurOffering = val;
+                                      print(user.entrepreneurOffering);
+                                      if (val == 'Other') {
+                                        otherSelected = true;
+                                      } else {
+                                        otherSelected = false;
+                                      }
+                                    });
+                                  }),
                             ),
                           ),
                           Visibility(
@@ -489,95 +415,41 @@ class _RegisterState extends State<Register> {
                           ),
                           Visibility(
                             visible: investorOptions,
-                            child: ButtonBar(
-                              alignment: MainAxisAlignment.center,
-                              children: [
-                                FlatButton(
-                                  color: Color(0xFF0C1A24),
-                                  minWidth: 200,
-                                  height: 40,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    side: BorderSide(
-                                      color: Color(0xFF0C1A24),
-                                    ),
+                            child: SizedBox(
+                              height: 8.0,
+                            ),
+                          ),
+                          Visibility(
+                            visible: investorOptions,
+                            child: Container(
+                              width: 250,
+                              child: DropdownButtonFormField(
+                                  isDense: true,
+                                  hint: Text(
+                                    'Select...',
+                                    style: TextStyle(color: Colors.white),
                                   ),
-                                  onPressed: () {
-                                    user.investorType = "Early-Stage/Angel";
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: Text(
-                                      'Early-Stage/Angel',
-                                      style: TextStyle(fontSize: 15),
-                                    ),
-                                  ),
-                                ),
-                                FlatButton(
-                                  color: Color(0xFF0C1A24),
-                                  minWidth: 200,
-                                  height: 40,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    side: BorderSide(
-                                      color: Color(0xFF0C1A24),
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    user.investorType = "Venture Capitalist";
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: Text(
-                                      'Venture Capitalist',
-                                      style: TextStyle(fontSize: 15),
-                                    ),
-                                  ),
-                                ),
-                                FlatButton(
-                                  color: Color(0xFF0C1A24),
-                                  minWidth: 200,
-                                  height: 40,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    side: BorderSide(
-                                      color: Color(0xFF0C1A24),
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    user.investorType = "Crowdfunder";
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: Text(
-                                      'Crowdfunder',
-                                      style: TextStyle(fontSize: 15),
-                                    ),
-                                  ),
-                                ),
-                                FlatButton(
-                                  color: Color(0xFF0C1A24),
-                                  minWidth: 200,
-                                  height: 40,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    side: BorderSide(
-                                      color: Color(0xFF0C1A24),
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    user.investorType = "Other";
-                                    toggleOtherSelected();
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: Text(
-                                      'Other',
-                                      style: TextStyle(fontSize: 15),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                                  dropdownColor: Color(0xFF0C1A24),
+                                  decoration: textInputDecoration,
+                                  items: INVESTOR_TYPES.map((type) {
+                                    return DropdownMenuItem(
+                                      value: type,
+                                      child: Text(
+                                        '$type',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    );
+                                  }).toList(),
+                                  onChanged: (val) {
+                                    setState(() {
+                                      user.investorType = val;
+                                      if (val == 'Other') {
+                                        otherSelected = true;
+                                      } else {
+                                        otherSelected = false;
+                                      }
+                                    });
+                                  }),
                             ),
                           ),
                           Visibility(
@@ -638,35 +510,28 @@ class _RegisterState extends State<Register> {
                             child: Container(
                               width: 250,
                               child: DropdownButtonFormField(
-                                isDense: true,
-                                hint: Text(
-                                  'Funding Required',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                dropdownColor: Color(0xFF0C1A24),
-                                decoration: textInputDecoration,
-                                items: [
-                                  DropdownMenuItem(
-                                    value: 0,
-                                    child: Text(
-                                      'Funding 1',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
+                                  isDense: true,
+                                  hint: Text(
+                                    'Funding Required',
+                                    style: TextStyle(color: Colors.white),
                                   ),
-                                  DropdownMenuItem(
-                                    value: 1,
-                                    child: Text(
-                                      'Funding 2',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                ],
-                                onChanged: (val) {
-                                  setState(() {
-                                    user.funding = val;
-                                  });
-                                },
-                              ),
+                                  dropdownColor: Color(0xFF0C1A24),
+                                  decoration: textInputDecoration,
+                                  items: FUNDING_OPTIONS.map((funding) {
+                                    return DropdownMenuItem(
+                                      value: FUNDING_OPTIONS.indexOf(funding),
+                                      child: Text(
+                                        '$funding',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    );
+                                  }).toList(),
+                                  onChanged: (val) {
+                                    setState(() {
+                                      user.funding = val;
+                                      print(user.funding);
+                                    });
+                                  }),
                             ),
                           ),
                           Visibility(
@@ -681,25 +546,19 @@ class _RegisterState extends State<Register> {
                                   ),
                                   dropdownColor: Color(0xFF0C1A24),
                                   decoration: textInputDecoration,
-                                  items: [
-                                    DropdownMenuItem(
-                                      value: 0,
+                                  items: FUNDING_OPTIONS.map((funding) {
+                                    return DropdownMenuItem(
+                                      value: FUNDING_OPTIONS.indexOf(funding),
                                       child: Text(
-                                        'Funding 1',
+                                        '$funding',
                                         style: TextStyle(color: Colors.white),
                                       ),
-                                    ),
-                                    DropdownMenuItem(
-                                      value: 1,
-                                      child: Text(
-                                        'Funding 2',
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    ),
-                                  ],
+                                    );
+                                  }).toList(),
                                   onChanged: (val) {
                                     setState(() {
                                       user.funding = val;
+                                      print(user.funding);
                                     });
                                   }),
                             ),
@@ -730,6 +589,7 @@ class _RegisterState extends State<Register> {
                                 });
                                 dynamic result = await _auth
                                     .registerWithEmailAndPassword(user);
+                                print("RESULT: " + result.toString());
                                 if (result == null) {
                                   setState(() {
                                     error = "ERROR";
@@ -783,3 +643,33 @@ class _RegisterState extends State<Register> {
     }
   }
 }
+
+// DropdownButtonFormField(
+//   isDense: true,
+//   hint: Text(
+//     'Funding Budget',
+//     style: TextStyle(color: Colors.white),
+//   ),
+//   dropdownColor: Color(0xFF0C1A24),
+//   decoration: textInputDecoration,
+//   items: [
+//     DropdownMenuItem(
+//       value: 0,
+//       child: Text(
+//         'Funding 1',
+//         style: TextStyle(color: Colors.white),
+//       ),
+//     ),
+//     DropdownMenuItem(
+//       value: 1,
+//       child: Text(
+//         'Funding 2',
+//         style: TextStyle(color: Colors.white),
+//       ),
+//     ),
+//   ],
+//   onChanged: (val) {
+//     setState(() {
+//       user.funding = val;
+//     });
+//   }),

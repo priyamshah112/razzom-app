@@ -15,7 +15,9 @@ class Home extends StatelessWidget {
           label: Text('logout'),
         ),
       ]),
-      body: Center(),
+      body: Center(
+        child: Text('DASHBOARD'),
+      ),
     );
   }
 }
