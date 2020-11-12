@@ -200,6 +200,10 @@ class _SignInState extends State<SignIn> {
                                         loading = false;
                                       });
                                     }
+                                    setState(() {
+                                      error = "ERROR";
+                                      loading = false;
+                                    });
                                   },
                                   child: Container(
                                     child: Image.asset(

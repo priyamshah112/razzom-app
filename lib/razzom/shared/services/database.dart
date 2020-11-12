@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:razzom/accounts/models/customUser.dart';
+import 'package:razzom/razzom/models/customUser.dart';
 
 class DatabaseService {
   final String uid;

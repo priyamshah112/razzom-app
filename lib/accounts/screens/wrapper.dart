@@ -2,8 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:razzom/accounts/screens/authentication/authentication.dart';
-import 'package:razzom/accounts/screens/home/home.dart';
+// import 'package:razzom/accounts/screens/home/home.dart';
 import 'package:razzom/accounts/screens/home/info1.dart';
+import 'package:razzom/investor/screens/idashboard.dart';
 import 'package:razzom/razzom/shared/data/vars.dart';
 
 class Wrapper extends StatelessWidget {
@@ -22,8 +23,9 @@ class Wrapper extends StatelessWidget {
     } else {
       showInfoScreens = false;
       if (user.emailVerified) {
-        print("HOME");
-        return Home();
+        uid = user.uid;
+        print("Investor");
+        return Idashboard();
       } else {
         showSignIn = true;
         print("Email not verified");

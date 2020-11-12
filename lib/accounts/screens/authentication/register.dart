@@ -1,6 +1,6 @@
 import 'package:country_list_pick/country_list_pick.dart';
 import 'package:flutter/material.dart';
-import 'package:razzom/accounts/models/customUser.dart';
+import 'package:razzom/razzom/models/customUser.dart';
 import 'package:razzom/razzom/shared/data/lists.dart';
 import 'package:razzom/razzom/shared/data/vars.dart';
 import 'package:razzom/razzom/shared/screens/loader.dart';

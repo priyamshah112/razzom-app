@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:razzom/accounts/models/customUser.dart';
-import 'package:razzom/accounts/services/database.dart';
+import 'package:razzom/razzom/models/customUser.dart';
+import 'package:razzom/razzom/shared/services/database.dart';
 import 'package:razzom/razzom/shared/data/vars.dart';
 
 class AuthService {
