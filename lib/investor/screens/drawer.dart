@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:razzom/accounts/services/auth.dart';
-import 'package:razzom/investor/bookmarks.dart';
+import 'package:razzom/investor/screens/bookmarks.dart';
 import 'package:razzom/investor/screens/connections.dart';
 import 'package:razzom/investor/screens/idashboard.dart';
-import 'package:razzom/investor/settings.dart';
+import 'package:razzom/investor/screens/settings.dart';
 
 class CustomDrawer extends StatelessWidget {
   final AuthService _auth = AuthService();
