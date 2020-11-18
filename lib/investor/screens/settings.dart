@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:razzom/investor/screens/drawer.dart';
+import 'package:razzom/investor/screens/home.dart';
+import 'package:razzom/investor/screens/idashboard.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -23,16 +25,30 @@ class _SettingsState extends State<Settings> {
         centerTitle: true,
         backgroundColor: Color(0xFF0C1A24),
         actions: [
-          FlatButton.icon(
+          IconButton(
+            icon: Icon(
+              Icons.person,
+              color: Colors.white,
+              size: 40,
+            ),
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => Idashboard()));
+            },
+          ),
+          IconButton(
             icon: Icon(
               Icons.home,
               color: Colors.white,
               size: 40,
             ),
-            label: Text(''),
             onPressed: () {
-              print("HOME");
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => Home()));
             },
+          ),
+          SizedBox(
+            width: 10,
           ),
         ],
       ),

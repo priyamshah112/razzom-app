@@ -163,10 +163,9 @@ class Info2 extends StatelessWidget {
             backgroundColor: Color(0xFF0CE5DF),
             onPressed: () {
               showInfoScreens = false;
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Authentication()),
-              );
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => Authentication()),
+                  (Route<dynamic> route) => false);
             }));
   }
 }

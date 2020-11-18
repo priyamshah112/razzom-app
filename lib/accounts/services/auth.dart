@@ -56,6 +56,11 @@ class AuthService {
     }
   }
 
+  @override
+  Future<void> resetPassword(String email) async {
+    await _auth.sendPasswordResetEmail(email: email);
+  }
+
   // Future signInWithGoogle() async {
   //   print('Google Sign in');
   //   final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
@@ -91,6 +96,7 @@ class AuthService {
   // logout
   Future signOut() async {
     try {
+      print("reached sign out");
       return await _auth.signOut();
     } catch (e) {
       print(e.toString());

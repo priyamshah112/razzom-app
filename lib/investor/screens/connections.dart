@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:razzom/investor/screens/connectionCard.dart';
 import 'package:razzom/investor/screens/drawer.dart';
+import 'package:razzom/investor/screens/home.dart';
+import 'package:razzom/investor/screens/idashboard.dart';
+import 'package:razzom/razzom/shared/data/vars.dart';
+import 'package:razzom/razzom/shared/screens/loader.dart';
+import 'package:razzom/razzom/shared/services/database.dart';
 
 class Connections extends StatefulWidget {
   @override
@@ -7,6 +13,11 @@ class Connections extends StatefulWidget {
 }
 
 class _ConnectionsState extends State<Connections> {
+  void initState() {
+    super.initState();
+    DatabaseService(uid: uid).getConnections();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,16 +34,30 @@ class _ConnectionsState extends State<Connections> {
         centerTitle: true,
         backgroundColor: Color(0xFF0C1A24),
         actions: [
-          FlatButton.icon(
+          IconButton(
+            icon: Icon(
+              Icons.person,
+              color: Colors.white,
+              size: 40,
+            ),
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => Idashboard()));
+            },
+          ),
+          IconButton(
             icon: Icon(
               Icons.home,
               color: Colors.white,
               size: 40,
             ),
-            label: Text(''),
             onPressed: () {
-              print("HOME");
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => Home()));
             },
+          ),
+          SizedBox(
+            width: 10,
           ),
         ],
       ),
@@ -54,96 +79,49 @@ class _ConnectionsState extends State<Connections> {
                 ),
               ),
             ),
-            Container(
-              color: Color(0xFF0C1A24),
-              width: MediaQuery.of(context).copyWith().size.width * (100 / 100),
-              height:
-                  MediaQuery.of(context).copyWith().size.height * (100 / 100) -
-                      169,
-              child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Card(
-                      color: Color(0xFF162F42),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          ListTile(
-                            contentPadding: EdgeInsets.all(10),
-                            leading: Image.asset(
-                              'assets/images/profile.png',
-                            ),
-                            title: Text(
-                              'Name',
-                              style: TextStyle(
-                                  fontSize: 22,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            subtitle: Container(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Industry',
-                                    style: TextStyle(
-                                        fontSize: 18, color: Colors.white),
-                                  ),
-                                  Text(
-                                    'Funding Required',
-                                    style: TextStyle(
-                                        fontSize: 18, color: Colors.white),
-                                  ),
-                                  Text(
-                                    'Email',
-                                    style: TextStyle(
-                                        fontSize: 18, color: Colors.white),
-                                  ),
-                                  Text(
-                                    'Phone number',
-                                    style: TextStyle(
-                                        fontSize: 18, color: Colors.white),
-                                  ),
-                                  Text(
-                                    'Whatsapp Number',
-                                    style: TextStyle(
-                                        fontSize: 18, color: Colors.white),
-                                  ),
-                                  Text(
-                                    'Location',
-                                    style: TextStyle(
-                                        fontSize: 18, color: Colors.white),
-                                  ),
-                                ],
+            FutureBuilder(
+              future: DatabaseService(uid: uid).getConnections(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                  return Container(
+                    color: Color(0xFF0C1A24),
+                    width: MediaQuery.of(context).copyWith().size.width *
+                        (100 / 100),
+                    height: MediaQuery.of(context).copyWith().size.height *
+                            (100 / 100) -
+                        169,
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
+                      child: (connections.length == 0)
+                          ? Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                              child: Text(
+                                'No connections yet!',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 18),
+                                textAlign: TextAlign.center,
                               ),
+                            )
+                          : ListView.builder(
+                              itemCount: connections.length,
+                              itemBuilder: (context, i) {
+                                return ConnectionCard(index: i);
+                              },
                             ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              TextButton(
-                                child: Image.asset(
-                                  'assets/images/whatsapp.png',
-                                  scale: 1.5,
-                                ),
-                                onPressed: () {/* ... */},
-                              ),
-                              SizedBox(width: 8),
-                            ],
-                          ),
-                        ],
-                      ),
                     ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                  ],
-                ),
-              ),
+                  );
+                } else {
+                  return Container(
+                    color: Color(0xFF0C1A24),
+                    width: MediaQuery.of(context).copyWith().size.width *
+                        (100 / 100),
+                    height: MediaQuery.of(context).copyWith().size.height *
+                            (100 / 100) -
+                        169,
+                    child: Loader(),
+                  );
+                }
+              },
             ),
           ],
         ),

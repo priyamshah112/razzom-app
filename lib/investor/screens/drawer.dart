@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:razzom/accounts/screens/authentication/signin.dart';
 import 'package:razzom/accounts/services/auth.dart';
 import 'package:razzom/investor/screens/bookmarks.dart';
 import 'package:razzom/investor/screens/connections.dart';
@@ -15,25 +16,25 @@ class CustomDrawer extends StatelessWidget {
         color: Color(0xFF0C1A24),
         child: ListView(
           children: <Widget>[
-            Container(
-              padding: EdgeInsets.all(10),
-              color: Color(0xFF0C1A24),
-              child: new ListTile(
-                leading: Icon(
-                  Icons.person,
-                  color: Colors.white,
-                  size: 30,
-                ),
-                title: Text(
-                  'Dashboard',
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Idashboard()));
-                },
-              ),
-            ),
+            // Container(
+            //   padding: EdgeInsets.all(10),
+            //   color: Color(0xFF0C1A24),
+            //   child: new ListTile(
+            //     leading: Icon(
+            //       Icons.person,
+            //       color: Colors.white,
+            //       size: 30,
+            //     ),
+            //     title: Text(
+            //       'Dashboard',
+            //       style: TextStyle(color: Colors.white, fontSize: 20),
+            //     ),
+            //     onTap: () {
+            //       Navigator.push(context,
+            //           MaterialPageRoute(builder: (context) => Idashboard()));
+            //     },
+            //   ),
+            // ),
             Container(
               padding: EdgeInsets.all(10),
               color: Color(0xFF0C1A24),
@@ -105,6 +106,12 @@ class CustomDrawer extends StatelessWidget {
                 ),
                 onTap: () async {
                   await _auth.signOut();
+                  // await _auth.signOut().then((res) {
+                  //   Navigator.pushReplacement(
+                  //     context,
+                  //     MaterialPageRoute(builder: (context) => SignIn()),
+                  //   );
+                  // });
                 },
               ),
             ),
