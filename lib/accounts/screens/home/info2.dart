@@ -39,7 +39,7 @@ class Info2 extends StatelessWidget {
                             'razzom.com',
                             style: TextStyle(
                               color: Color(0xFF0CE5DF),
-                              fontSize: 45,
+                              fontSize: 40,
                               fontWeight: FontWeight.bold,
                               fontFamily: 'Bahnschrift',
                             ),
@@ -48,7 +48,7 @@ class Info2 extends StatelessWidget {
                             'Connect.Empower.Grow.',
                             style: TextStyle(
                               color: Colors.black,
-                              fontSize: 20,
+                              fontSize: 17,
                               fontFamily: 'Bahnschrift',
                             ),
                           ),
@@ -163,10 +163,9 @@ class Info2 extends StatelessWidget {
             backgroundColor: Color(0xFF0CE5DF),
             onPressed: () {
               showInfoScreens = false;
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Authentication()),
-              );
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => Authentication()),
+                  (Route<dynamic> route) => false);
             }));
   }
 }

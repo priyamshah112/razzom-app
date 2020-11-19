@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:razzom/accounts/screens/authentication/register.dart';
 import 'package:razzom/accounts/screens/authentication/signin.dart';
+import 'package:razzom/razzom/shared/data/vars.dart';
 
 class Authentication extends StatefulWidget {
   @override
@@ -8,7 +9,6 @@ class Authentication extends StatefulWidget {
 }
 
 class _AuthenticationState extends State<Authentication> {
-  bool showSignIn = true;
   void toggleView() {
     setState(() {
       showSignIn = !showSignIn;
@@ -17,11 +17,13 @@ class _AuthenticationState extends State<Authentication> {
 
   @override
   Widget build(BuildContext context) {
-    if (showSignIn) {
+    if (showSignIn || fromRegister) {
+      print("signin");
       return Container(
         child: SignIn(toggleView: toggleView),
       );
     } else {
+      print("register");
       return Container(
         child: Register(toggleView: toggleView),
       );

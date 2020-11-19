@@ -37,7 +37,7 @@ class Info1 extends StatelessWidget {
                           'razzom.com',
                           style: TextStyle(
                             color: Color(0xFF0CE5DF),
-                            fontSize: 45,
+                            fontSize: 40,
                             fontWeight: FontWeight.bold,
                             fontFamily: 'Bahnschrift',
                           ),
@@ -46,7 +46,7 @@ class Info1 extends StatelessWidget {
                           'Connect.Empower.Grow.',
                           style: TextStyle(
                             color: Colors.black,
-                            fontSize: 20,
+                            fontSize: 17,
                             fontFamily: 'Bahnschrift',
                           ),
                         ),
@@ -128,7 +128,7 @@ class Info1 extends StatelessWidget {
                           padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
                           child: Image.asset(
                             'assets/images/info1_2.png',
-                            scale: 1,
+                            scale: 1.1,
                           ),
                         ),
                       ],

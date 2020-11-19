@@ -1,7 +1,9 @@
 import 'package:country_list_pick/country_list_pick.dart';
 import 'package:flutter/material.dart';
-import 'package:razzom/accounts/models/customUser.dart';
+import 'package:razzom/accounts/screens/authentication/signin.dart';
+import 'package:razzom/razzom/models/customUser.dart';
 import 'package:razzom/razzom/shared/data/lists.dart';
+import 'package:razzom/razzom/shared/data/vars.dart';
 import 'package:razzom/razzom/shared/screens/loader.dart';
 import 'package:razzom/accounts/services/auth.dart';
 import 'package:razzom/razzom/shared/screens/constants.dart';
@@ -18,9 +20,6 @@ class _RegisterState extends State<Register> {
   final _formKey = GlobalKey<FormState>();
 
   CustomUser user = new CustomUser();
-
-  String error = "";
-  bool loading = false;
   bool entrepreneurOptions = false;
   bool investorOptions = false;
   bool userTypeSelected = false;
@@ -123,6 +122,7 @@ class _RegisterState extends State<Register> {
                                 user.name = val;
                               });
                             },
+                            textInputAction: TextInputAction.next,
                           ),
                           SizedBox(
                             height: 16.0,
@@ -139,6 +139,7 @@ class _RegisterState extends State<Register> {
                                 user.phone = val;
                               });
                             },
+                            textInputAction: TextInputAction.next,
                           ),
                           SizedBox(
                             height: 16.0,
@@ -155,6 +156,7 @@ class _RegisterState extends State<Register> {
                                 user.whatsapp = val;
                               });
                             },
+                            textInputAction: TextInputAction.next,
                           ),
                           SizedBox(
                             height: 16.0,
@@ -170,6 +172,7 @@ class _RegisterState extends State<Register> {
                                 user.email = val;
                               });
                             },
+                            textInputAction: TextInputAction.next,
                           ),
                           SizedBox(
                             height: 16.0,
@@ -187,6 +190,7 @@ class _RegisterState extends State<Register> {
                                 user.password = val;
                               });
                             },
+                            textInputAction: TextInputAction.next,
                           ),
                           SizedBox(
                             height: 16.0,
@@ -204,6 +208,7 @@ class _RegisterState extends State<Register> {
                                 user.confirmPassword = val;
                               });
                             },
+                            textInputAction: TextInputAction.next,
                           ),
                           SizedBox(
                             height: 16.0,
@@ -258,6 +263,7 @@ class _RegisterState extends State<Register> {
                                 user.location['city'] = val;
                               });
                             },
+                            textInputAction: TextInputAction.next,
                           ),
                           SizedBox(
                             height: 20.0,
@@ -390,6 +396,8 @@ class _RegisterState extends State<Register> {
                                   }).toList(),
                                   onChanged: (val) {
                                     setState(() {
+                                      FocusScope.of(context)
+                                          .requestFocus(new FocusNode());
                                       user.entrepreneurOffering = val;
                                       print(user.entrepreneurOffering);
                                       if (val == 'Other') {
@@ -442,6 +450,8 @@ class _RegisterState extends State<Register> {
                                   }).toList(),
                                   onChanged: (val) {
                                     setState(() {
+                                      FocusScope.of(context)
+                                          .requestFocus(new FocusNode());
                                       user.investorType = val;
                                       if (val == 'Other') {
                                         otherSelected = true;
@@ -493,9 +503,14 @@ class _RegisterState extends State<Register> {
                                     val.isEmpty ? 'Please specify' : null,
                                 onChanged: (val) {
                                   setState(() {
-                                    user.specify = val;
+                                    if (user.userType == "Entrepreneur") {
+                                      user.entrepreneurOffering = val;
+                                    } else {
+                                      user.investorType = val;
+                                    }
                                   });
                                 },
+                                textInputAction: TextInputAction.next,
                               ),
                             ),
                           ),
@@ -528,6 +543,8 @@ class _RegisterState extends State<Register> {
                                   }).toList(),
                                   onChanged: (val) {
                                     setState(() {
+                                      FocusScope.of(context)
+                                          .requestFocus(new FocusNode());
                                       user.funding = val;
                                       print(user.funding);
                                     });
@@ -557,6 +574,8 @@ class _RegisterState extends State<Register> {
                                   }).toList(),
                                   onChanged: (val) {
                                     setState(() {
+                                      FocusScope.of(context)
+                                          .requestFocus(new FocusNode());
                                       user.funding = val;
                                       print(user.funding);
                                     });
@@ -582,9 +601,11 @@ class _RegisterState extends State<Register> {
                                   fontWeight: FontWeight.bold),
                             ),
                             onPressed: () async {
+                              fromRegister = true;
                               print(user);
                               if (_formKey.currentState.validate()) {
                                 setState(() {
+                                  registerError = "";
                                   loading = true;
                                 });
                                 dynamic result = await _auth
@@ -592,10 +613,18 @@ class _RegisterState extends State<Register> {
                                 print("RESULT: " + result.toString());
                                 if (result == null) {
                                   setState(() {
-                                    error = "ERROR";
+                                    registerError =
+                                        "Sign up failed. Please try again.";
                                     loading = false;
                                   });
                                 }
+                                // setState(() {
+                                //   loading = false;
+                                // });
+                                Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                        builder: (context) => SignIn()),
+                                    (Route<dynamic> route) => false);
                               }
                             },
                           ),
@@ -603,7 +632,7 @@ class _RegisterState extends State<Register> {
                             height: 10.0,
                           ),
                           Text(
-                            error,
+                            registerError,
                             style: TextStyle(
                               color: Colors.red,
                               fontSize: 10.0,
