@@ -17,7 +17,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   void initState() {
     super.initState();
-    DatabaseService(uid: uid).getVideos();
+    // DatabaseService(uid: uid).getVideos();
   }
 
   @override
@@ -55,70 +55,78 @@ class _HomeState extends State<Home> {
       drawer: CustomDrawer(),
       body: Container(
         width: MediaQuery.of(context).copyWith().size.width * (100 / 100),
-        child: Column(
-          children: [
-            Container(
-              width: MediaQuery.of(context).copyWith().size.width * (100 / 100),
-              height: 50,
-              alignment: Alignment.center,
-              color: Color(0xFF162F42),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.filter_alt,
-                    color: Colors.white,
-                    size: 40,
-                  ),
-                  Image.asset('assets/images/coins.png'),
-                ],
+        child: Expanded(
+          flex: 8,
+          child: Column(
+            children: [
+              Container(
+                width:
+                    MediaQuery.of(context).copyWith().size.width * (100 / 100),
+                height: 50,
+                alignment: Alignment.center,
+                color: Color(0xFF162F42),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.filter_alt,
+                      color: Colors.white,
+                      size: 40,
+                    ),
+                    Image.asset('assets/images/coins.png'),
+                  ],
+                ),
               ),
-            ),
-            FutureBuilder(
-              future: DatabaseService(uid: uid).getVideos(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData) {
-                  return Container(
-                    color: Color(0xFF0C1A24),
-                    width: MediaQuery.of(context).copyWith().size.width *
-                        (100 / 100),
-                    height: MediaQuery.of(context).copyWith().size.height *
-                            (100 / 100) -
-                        169,
-                    child: Padding(
-                        padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
-                        child:
-                            // (videos.length == 0)?
-                            Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                          child: Text(
-                            'No videos yet!',
-                            style: TextStyle(color: Colors.white, fontSize: 18),
-                            textAlign: TextAlign.center,
-                          ),
-                        )
-                        // : ListView.builder(
-                        //     itemCount: videos.length,
-                        //     itemBuilder: (context, i) {
-                        //       return VideoCard(index: i);
-                        //       // return Text('i');
-                        //     },
-                        //   ),
-                        ),
-                  );
-                } else {
-                  return Container(
-                    color: Color(0xFF0C1A24),
-                    width: MediaQuery.of(context).copyWith().size.width *
-                        (100 / 100),
-                    height: MediaQuery.of(context).copyWith().size.height *
-                            (100 / 100) -
-                        169,
-                    child: Loader(),
-                  );
-                }
-              },
-            ),
-          ],
+              Expanded(
+                flex: 90,
+                child: FutureBuilder(
+                  future: DatabaseService(uid: uid).getVideos(),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.hasData) {
+                      return Container(
+                        color: Color(0xFF0C1A24),
+                        width: MediaQuery.of(context).copyWith().size.width *
+                            (100 / 100),
+                        // height: MediaQuery.of(context).copyWith().size.height *
+                        //         (100 / 100) -
+                        //     169,
+                        child: Padding(
+                            padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
+                            child:
+                                // (videos.length == 0)?
+                                Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                              child: Text(
+                                'No videos yet!',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 18),
+                                textAlign: TextAlign.center,
+                              ),
+                            )
+                            // : ListView.builder(
+                            //     itemCount: videos.length,
+                            //     itemBuilder: (context, i) {
+                            //       return VideoCard(index: i);
+                            //       // return Text('i');
+                            //     },
+                            //   ),
+                            ),
+                      );
+                    } else {
+                      return Container(
+                        color: Color(0xFF0C1A24),
+                        width: MediaQuery.of(context).copyWith().size.width *
+                            (100 / 100),
+                        // height: MediaQuery.of(context).copyWith().size.height *
+                        //         (100 / 100) -
+                        //     169,
+                        child: Loader(),
+                      );
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

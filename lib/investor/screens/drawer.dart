@@ -3,7 +3,6 @@ import 'package:razzom/accounts/screens/authentication/signin.dart';
 import 'package:razzom/accounts/services/auth.dart';
 import 'package:razzom/investor/screens/bookmarks.dart';
 import 'package:razzom/investor/screens/connections.dart';
-import 'package:razzom/investor/screens/idashboard.dart';
 import 'package:razzom/investor/screens/settings.dart';
 
 class CustomDrawer extends StatelessWidget {
@@ -105,13 +104,13 @@ class CustomDrawer extends StatelessWidget {
                   style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
                 onTap: () async {
-                  await _auth.signOut();
-                  // await _auth.signOut().then((res) {
-                  //   Navigator.pushReplacement(
-                  //     context,
-                  //     MaterialPageRoute(builder: (context) => SignIn()),
-                  //   );
-                  // });
+                  // await _auth.signOut();
+                  await _auth.signOut().then((res) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => SignIn()),
+                    );
+                  });
                 },
               ),
             ),

@@ -125,6 +125,6 @@ class BookmarkCard extends StatelessWidget {
     var id = bookmark.id;
     print(id);
     await DatabaseService(uid: uid).deleteBookmark(id);
-    dynamic result = await DatabaseService(uid: uid).getUserData();
+    // dynamic result = await DatabaseService(uid: uid).getUserData();
   }
 }

@@ -43,9 +43,11 @@ class ConnectionCard extends StatelessWidget {
                       shape: BoxShape.circle,
                       image: new DecorationImage(
                         fit: BoxFit.contain,
-                        image: connection['profile_pic'] == null
-                            ? AssetImage('assets/images/profile.png')
-                            : NetworkImage(connection['profile_pic']),
+                        image: AssetImage('assets/images/profile.png'),
+
+                        // image: connection['profile_pic'] == null
+                        //     ? AssetImage('assets/images/profile.png')
+                        //     : NetworkImage(connection['profile_pic']),
                       ),
                     ),
                   ),

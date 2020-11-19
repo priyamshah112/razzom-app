@@ -1,5 +1,6 @@
 import 'package:country_list_pick/country_list_pick.dart';
 import 'package:flutter/material.dart';
+import 'package:razzom/accounts/screens/authentication/signin.dart';
 import 'package:razzom/razzom/models/customUser.dart';
 import 'package:razzom/razzom/shared/data/lists.dart';
 import 'package:razzom/razzom/shared/data/vars.dart';
@@ -617,9 +618,13 @@ class _RegisterState extends State<Register> {
                                     loading = false;
                                   });
                                 }
-                                setState(() {
-                                  loading = false;
-                                });
+                                // setState(() {
+                                //   loading = false;
+                                // });
+                                Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                        builder: (context) => SignIn()),
+                                    (Route<dynamic> route) => false);
                               }
                             },
                           ),

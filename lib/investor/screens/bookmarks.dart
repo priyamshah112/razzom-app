@@ -17,7 +17,7 @@ class Bookmarks extends StatefulWidget {
 class _BookmarksState extends State<Bookmarks> {
   void initState() {
     super.initState();
-    DatabaseService(uid: uid).getBookmarks();
+    // DatabaseService(uid: uid).getBookmarks();
   }
 
   @override
@@ -68,62 +68,69 @@ class _BookmarksState extends State<Bookmarks> {
         width: MediaQuery.of(context).copyWith().size.width * (100 / 100),
         child: Column(
           children: [
-            Container(
-              width: MediaQuery.of(context).copyWith().size.width * (100 / 100),
-              height: 50,
-              alignment: Alignment.center,
-              color: Color(0xFF162F42),
-              child: Text(
-                'Bookmarks',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
+            Expanded(
+              flex: 8,
+              child: Container(
+                width:
+                    MediaQuery.of(context).copyWith().size.width * (100 / 100),
+                height: 50,
+                alignment: Alignment.center,
+                color: Color(0xFF162F42),
+                child: Text(
+                  'Bookmarks',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
                 ),
               ),
             ),
-            FutureBuilder(
-              future: DatabaseService(uid: uid).getBookmarks(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData) {
-                  return Container(
-                    color: Color(0xFF0C1A24),
-                    width: MediaQuery.of(context).copyWith().size.width *
-                        (100 / 100),
-                    height: MediaQuery.of(context).copyWith().size.height *
-                            (100 / 100) -
-                        169,
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
-                      child: (bookmarks.length == 0)
-                          ? Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                              child: Text(
-                                'No bookmarks yet!',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 18),
-                                textAlign: TextAlign.center,
+            Expanded(
+              flex: 90,
+              child: FutureBuilder(
+                future: DatabaseService(uid: uid).getBookmarks(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasData) {
+                    return Container(
+                      color: Color(0xFF0C1A24),
+                      width: MediaQuery.of(context).copyWith().size.width *
+                          (100 / 100),
+                      // height: MediaQuery.of(context).copyWith().size.height *
+                      //         (100 / 100) -
+                      //     169,
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+                        child: (bookmarks.length == 0)
+                            ? Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                child: Text(
+                                  'No bookmarks yet!',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 18),
+                                  textAlign: TextAlign.center,
+                                ),
+                              )
+                            : ListView.builder(
+                                itemCount: bookmarks.length,
+                                itemBuilder: (context, i) {
+                                  return BookmarkCard(index: i);
+                                },
                               ),
-                            )
-                          : ListView.builder(
-                              itemCount: bookmarks.length,
-                              itemBuilder: (context, i) {
-                                return BookmarkCard(index: i);
-                              },
-                            ),
-                    ),
-                  );
-                } else {
-                  return Container(
-                    color: Color(0xFF0C1A24),
-                    width: MediaQuery.of(context).copyWith().size.width *
-                        (100 / 100),
-                    height: MediaQuery.of(context).copyWith().size.height *
-                            (100 / 100) -
-                        169,
-                    child: Loader(),
-                  );
-                }
-              },
+                      ),
+                    );
+                  } else {
+                    return Container(
+                      color: Color(0xFF0C1A24),
+                      width: MediaQuery.of(context).copyWith().size.width *
+                          (100 / 100),
+                      // height: MediaQuery.of(context).copyWith().size.height *
+                      //         (100 / 100) -
+                      //     169,
+                      child: Loader(),
+                    );
+                  }
+                },
+              ),
             ),
           ],
         ),

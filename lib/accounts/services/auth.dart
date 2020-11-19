@@ -23,6 +23,7 @@ class AuthService {
       print("user data received");
       if (result.user.emailVerified) {
         print("Email verified");
+        uid = result.user.uid;
         return result.user;
       } else {
         return null;
@@ -56,7 +57,6 @@ class AuthService {
     }
   }
 
-  @override
   Future<void> resetPassword(String email) async {
     await _auth.sendPasswordResetEmail(email: email);
   }

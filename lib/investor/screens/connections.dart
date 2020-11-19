@@ -15,7 +15,7 @@ class Connections extends StatefulWidget {
 class _ConnectionsState extends State<Connections> {
   void initState() {
     super.initState();
-    DatabaseService(uid: uid).getConnections();
+    // DatabaseService(uid: uid).getConnections();
   }
 
   @override
@@ -66,62 +66,69 @@ class _ConnectionsState extends State<Connections> {
         width: MediaQuery.of(context).copyWith().size.width * (100 / 100),
         child: Column(
           children: [
-            Container(
-              width: MediaQuery.of(context).copyWith().size.width * (100 / 100),
-              height: 50,
-              alignment: Alignment.center,
-              color: Color(0xFF162F42),
-              child: Text(
-                'Connections',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
+            Expanded(
+              flex: 8,
+              child: Container(
+                width:
+                    MediaQuery.of(context).copyWith().size.width * (100 / 100),
+                height: 50,
+                alignment: Alignment.center,
+                color: Color(0xFF162F42),
+                child: Text(
+                  'Connections',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
                 ),
               ),
             ),
-            FutureBuilder(
-              future: DatabaseService(uid: uid).getConnections(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData) {
-                  return Container(
-                    color: Color(0xFF0C1A24),
-                    width: MediaQuery.of(context).copyWith().size.width *
-                        (100 / 100),
-                    height: MediaQuery.of(context).copyWith().size.height *
-                            (100 / 100) -
-                        169,
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
-                      child: (connections.length == 0)
-                          ? Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                              child: Text(
-                                'No connections yet!',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 18),
-                                textAlign: TextAlign.center,
+            Expanded(
+              flex: 90,
+              child: FutureBuilder(
+                future: DatabaseService(uid: uid).getConnections(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasData) {
+                    return Container(
+                      color: Color(0xFF0C1A24),
+                      width: MediaQuery.of(context).copyWith().size.width *
+                          (100 / 100),
+                      // height: MediaQuery.of(context).copyWith().size.height *
+                      //         (100 / 100) -
+                      //     169,
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
+                        child: (connections.length == 0)
+                            ? Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                child: Text(
+                                  'No connections yet!',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 18),
+                                  textAlign: TextAlign.center,
+                                ),
+                              )
+                            : ListView.builder(
+                                itemCount: connections.length,
+                                itemBuilder: (context, i) {
+                                  return ConnectionCard(index: i);
+                                },
                               ),
-                            )
-                          : ListView.builder(
-                              itemCount: connections.length,
-                              itemBuilder: (context, i) {
-                                return ConnectionCard(index: i);
-                              },
-                            ),
-                    ),
-                  );
-                } else {
-                  return Container(
-                    color: Color(0xFF0C1A24),
-                    width: MediaQuery.of(context).copyWith().size.width *
-                        (100 / 100),
-                    height: MediaQuery.of(context).copyWith().size.height *
-                            (100 / 100) -
-                        169,
-                    child: Loader(),
-                  );
-                }
-              },
+                      ),
+                    );
+                  } else {
+                    return Container(
+                      color: Color(0xFF0C1A24),
+                      width: MediaQuery.of(context).copyWith().size.width *
+                          (100 / 100),
+                      // height: MediaQuery.of(context).copyWith().size.height *
+                      //         (100 / 100) -
+                      // 169,
+                      child: Loader(),
+                    );
+                  }
+                },
+              ),
             ),
           ],
         ),

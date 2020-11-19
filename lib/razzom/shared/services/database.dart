@@ -143,6 +143,7 @@ class DatabaseService {
     connections.clear();
     var connectionsData =
         await connectionsCollection.where('investor_id', isEqualTo: uid).get();
+    print("data received");
     for (var i = 0; i < connectionsData.size; i++) {
       var entrepreneurId = connectionsData.docs[i].data()['entrepreneur_id'];
       var connection = await entrepreneurCollection.doc(entrepreneurId).get();

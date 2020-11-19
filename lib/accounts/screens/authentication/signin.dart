@@ -31,6 +31,7 @@ class _SignInState extends State<SignIn> {
     fToast.init(context);
     fToast2 = FToast();
     fToast2.init(context);
+    loading = false;
   }
 
   _showToast() {
@@ -234,15 +235,21 @@ class _SignInState extends State<SignIn> {
                                           "Invalid Credentials. Please try again.";
                                       loading = false;
                                     });
+                                  } else {
+                                    print(result);
+
+                                    Navigator.of(context).pushAndRemoveUntil(
+                                        MaterialPageRoute(
+                                            builder: (context) => Idashboard()),
+                                        (Route<dynamic> route) => false);
                                   }
-                                  print(result);
-                                  setState(() {
-                                    loading = false;
-                                  });
-                                  Navigator.of(context).pushAndRemoveUntil(
-                                      MaterialPageRoute(
-                                          builder: (context) => Idashboard()),
-                                      (Route<dynamic> route) => false);
+                                  // setState(() {
+                                  //   loading = false;
+                                  // });
+                                  // Navigator.of(context).pushAndRemoveUntil(
+                                  //     MaterialPageRoute(
+                                  //         builder: (context) => Idashboard()),
+                                  //     (Route<dynamic> route) => false);
                                 } catch (e) {
                                   print(e);
                                   setState(() {
@@ -253,8 +260,11 @@ class _SignInState extends State<SignIn> {
                               }
                             },
                           ),
-                          SizedBox(
-                            height: 10.0,
+                          Visibility(
+                            visible: !(signinError == ""),
+                            child: SizedBox(
+                              height: 10.0,
+                            ),
                           ),
                           Text(
                             signinError,

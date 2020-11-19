@@ -41,7 +41,7 @@ class Wrapper extends StatelessWidget {
     }
   }
 
-  getUserData() async {
-    await DatabaseService(uid: uid).getData();
-  }
+  // getUserData() async {
+  //   await DatabaseService(uid: uid).getData();
+  // }
 }
