@@ -103,14 +103,47 @@ class CustomDrawer extends StatelessWidget {
                   'Logout',
                   style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
-                onTap: () async {
+                onTap: () {
                   // await _auth.signOut();
-                  await _auth.signOut().then((res) {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => SignIn()),
-                    );
-                  });
+                  // void _showDialog() {
+                  // flutter defined function
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      // return object of type Dialog
+                      return AlertDialog(
+                        title: new Text("Confirm Logout"),
+                        content: new Text("Are you sure you want to logout?"),
+                        actions: <Widget>[
+                          new FlatButton(
+                            child: new Text("Yes"),
+                            onPressed: () async {
+                              // await _auth.signOut();
+                              await _auth.signOut().then((res) {
+                                Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                        builder: (context) => SignIn()),
+                                    (Route<dynamic> route) => false);
+                              });
+                            },
+                          ),
+                          new FlatButton(
+                            child: new Text("No"),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                  // }
+                  // await _auth.signOut().then((res) {
+                  //   Navigator.pushReplacement(
+                  //     context,
+                  //     MaterialPageRoute(builder: (context) => SignIn()),
+                  //   );
+                  // });
                 },
               ),
             ),

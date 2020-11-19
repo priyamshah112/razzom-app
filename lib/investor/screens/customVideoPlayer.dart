@@ -1,5 +1,6 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 
 class CustomVideoPlayer extends StatefulWidget {
@@ -25,6 +26,15 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
       videoPlayerController: widget.videoPlayerController,
       autoInitialize: true,
       looping: widget.looping,
+      showControls: true,
+      allowedScreenSleep: false,
+      allowFullScreen: false,
+      // deviceOrientationsAfterFullScreen: [
+      //   DeviceOrientation.landscapeRight,
+      //   DeviceOrientation.landscapeLeft,
+      //   DeviceOrientation.portraitUp,
+      //   DeviceOrientation.portraitDown,
+      // ],
       errorBuilder: (context, errorMessage) {
         return Center(
           child: Text(
@@ -34,26 +44,47 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
         );
       },
     );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(0.0),
-      child: Container(
-        width: MediaQuery.of(context).copyWith().size.width,
-        height: 200,
-        child: Chewie(
-          controller: _chewieController,
-        ),
-      ),
-    );
+    // _chewieController.addListener(() {
+    //   if (_chewieController.isFullScreen) {
+    //     SystemChrome.setPreferredOrientations([
+    //       DeviceOrientation.landscapeRight,
+    //       DeviceOrientation.landscapeLeft,
+    //     ]);
+    //   } else {
+    //     SystemChrome.setPreferredOrientations([
+    //       DeviceOrientation.portraitUp,
+    //       DeviceOrientation.portraitDown,
+    //     ]);
+    //   }
+    // });
   }
 
   @override
   void dispose() {
-    super.dispose();
     widget.videoPlayerController.dispose();
     _chewieController.dispose();
+    // SystemChrome.setPreferredOrientations([
+    //   DeviceOrientation.landscapeRight,
+    //   DeviceOrientation.landscapeLeft,
+    //   DeviceOrientation.portraitUp,
+    //   DeviceOrientation.portraitDown,
+    // ]);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(0.0),
+        child: Container(
+          width: MediaQuery.of(context).copyWith().size.width,
+          height: 200,
+          child: Chewie(
+            controller: _chewieController,
+          ),
+        ),
+      ),
+    );
   }
 }

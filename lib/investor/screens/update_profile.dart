@@ -34,7 +34,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
   bool fileUploaded = false;
   bool fileUploading = false;
 
-  String name = currentUser.name;
+  // String name = currentUser.name;
   String phone = currentUser.phone;
   String whatsapp = currentUser.whatsapp;
   int funding = currentUser.funding;
@@ -104,22 +104,22 @@ class _UpdateProfileState extends State<UpdateProfile> {
                         SizedBox(
                           height: 16.0,
                         ),
-                        TextFormField(
-                          style: TextStyle(color: Colors.white),
-                          initialValue: currentUser.name,
-                          decoration:
-                              textInputDecoration.copyWith(hintText: 'Name'),
-                          validator: (val) => val.isEmpty ? 'Enter name' : null,
-                          onChanged: (val) {
-                            setState(() {
-                              name = val;
-                            });
-                          },
-                          textInputAction: TextInputAction.next,
-                        ),
-                        SizedBox(
-                          height: 16.0,
-                        ),
+                        // TextFormField(
+                        //   style: TextStyle(color: Colors.white),
+                        //   initialValue: currentUser.name,
+                        //   decoration:
+                        //       textInputDecoration.copyWith(hintText: 'Name'),
+                        //   validator: (val) => val.isEmpty ? 'Enter name' : null,
+                        //   onChanged: (val) {
+                        //     setState(() {
+                        //       name = val;
+                        //     });
+                        //   },
+                        //   textInputAction: TextInputAction.next,
+                        // ),
+                        // SizedBox(
+                        //   height: 16.0,
+                        // ),
                         TextFormField(
                           initialValue: currentUser.phone,
                           style: TextStyle(color: Colors.white),
@@ -162,7 +162,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                         Visibility(
                           visible: true,
                           child: Container(
-                            width: 250,
+                            // width: 250,
                             child: DropdownButtonFormField(
                                 value: currentUser.funding,
                                 isDense: true,
@@ -184,6 +184,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                                 onChanged: (val) {
                                   setState(() {
                                     funding = val;
+                                    print(funding);
                                     FocusScope.of(context)
                                         .requestFocus(new FocusNode());
                                   });
@@ -195,16 +196,25 @@ class _UpdateProfileState extends State<UpdateProfile> {
                         ),
                         Visibility(
                           visible: true,
-                          child: FlatButton(
-                            padding: EdgeInsets.all(16),
-                            onPressed: () async {
-                              await uploadImage();
-                            },
-                            child: Text(
-                              'Choose Profile Picture',
-                              style: TextStyle(color: Colors.white),
+                          child: Container(
+                            width: MediaQuery.of(context).copyWith().size.width,
+                            child: FlatButton(
+                              padding: EdgeInsets.all(16),
+                              onPressed: () async {
+                                await uploadImage();
+                              },
+                              child: Text(
+                                'Choose Profile Picture',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              color: Color(0xFF0C1A24),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                                side: BorderSide(
+                                  color: Color(0xFF0C1A24),
+                                ),
+                              ),
                             ),
-                            color: Color(0xFF0C1A24),
                           ),
                         ),
                         Visibility(
@@ -278,7 +288,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                               print("Validated");
 
                               await DatabaseService(uid: uid).updateUserData(
-                                  name,
+                                  // name,
                                   phone,
                                   whatsapp,
                                   funding,

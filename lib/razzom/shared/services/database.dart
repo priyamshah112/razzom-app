@@ -77,7 +77,7 @@ class DatabaseService {
     }
   }
 
-  Future updateUserData(String name, String phone, String whatsapp, int funding,
+  Future updateUserData(String phone, String whatsapp, int funding,
       String profilePicUrl, String description) async {
     print("reached db update");
     print(currentUser.userType);
@@ -86,7 +86,7 @@ class DatabaseService {
     if (currentUser.userType == "Entrepreneur") {
       print("reached entrepreneur db");
       return await entrepreneurCollection.doc(uid).update({
-        'name': name,
+        // 'name': name,
         'phone_no': phone,
         'whatsapp_no': whatsapp,
         'funding_required': funding,
@@ -96,10 +96,10 @@ class DatabaseService {
     } else if (currentUser.userType == "Investor") {
       print("reached investor db");
       return await investorCollection.doc(uid).update({
-        'name': name,
+        // 'name': name,
         'phone_no': phone,
         'whatsapp_no': whatsapp,
-        'funding_required': funding,
+        'budget': funding,
         'profile_pic': profilePicUrl,
         'intro': description,
         'updated_on': updatedOn,
@@ -194,12 +194,12 @@ class DatabaseService {
 
   Future deleteBookmark(String id) async {
     print("reached db delete bookmark");
-    var updatedOn = new DateTime.now();
+    var date = new DateTime.now();
 
     return await bookmarksCollection.doc(id).update({
       'is_deleted': true,
-      'updated_on': updatedOn,
-      'deleted_on': updatedOn,
+      'updated_on': date,
+      'deleted_on': date,
     });
   }
 }
