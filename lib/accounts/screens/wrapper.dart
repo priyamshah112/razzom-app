@@ -4,8 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:razzom/accounts/screens/authentication/authentication.dart';
 // import 'package:razzom/accounts/screens/home/home.dart';
 import 'package:razzom/accounts/screens/home/info1.dart';
+import 'package:razzom/entrepreneur/screens/edashboard.dart';
 import 'package:razzom/investor/screens/idashboard.dart';
 import 'package:razzom/razzom/shared/data/vars.dart';
+import 'package:razzom/razzom/shared/screens/loader.dart';
 import 'package:razzom/razzom/shared/services/database.dart';
 
 class Wrapper extends StatelessWidget {
@@ -27,12 +29,31 @@ class Wrapper extends StatelessWidget {
       if (user.emailVerified) {
         // loading = true;
         uid = user.uid;
+        print("uid is " + uid);
+        return FutureBuilder(
+            future: DatabaseService(uid: uid).getInitialData(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.hasData) {
+                if (currentUser.userType == "Investor") {
+                  return Idashboard();
+                } else {
+                  return Edashboard();
+                }
+              } else {
+                return Container(
+                  color: Color(0xFF0C1A24),
+                  width: MediaQuery.of(context).copyWith().size.width *
+                      (100 / 100),
+                  child: Loader(),
+                );
+              }
+            });
         // getUserData().then(() {
         //   loading = false;
         //   return Idashboard();
         // });
-        print("Investor");
-        return Idashboard();
+        // print("Investor");
+        // return Idashboard();
       } else {
         showSignIn = true;
         print("Email not verified");

@@ -25,7 +25,7 @@ class ConnectionCard extends StatelessWidget {
       scheme: 'mailto',
       path: connection['email'].toString(),
     );
-    // print(connection);
+    print(connection);
     return Padding(
       padding: EdgeInsets.all(0),
       child: Column(
@@ -54,7 +54,8 @@ class ConnectionCard extends StatelessWidget {
                                 shape: BoxShape.circle,
                                 image: new DecorationImage(
                                   fit: BoxFit.fill,
-                                  // image: AssetImage('assets/images/profile.png'),
+                                  // image:
+                                  // AssetImage('assets/images/profile.png'),
                                   image: connection['profile_pic'] == null
                                       ? AssetImage('assets/images/profile.png')
                                       : NetworkImage(connection['profile_pic']),
@@ -70,6 +71,7 @@ class ConnectionCard extends StatelessWidget {
                           children: [
                             Text(
                               connection['name'],
+                              // 'name',
                               style: TextStyle(
                                   fontSize: 22,
                                   color: Colors.white,
@@ -80,7 +82,8 @@ class ConnectionCard extends StatelessWidget {
                             ),
                             Container(
                               child: Text(
-                                connection['industry'],
+                                connection['investor_type'],
+                                // "investor type",
                                 style: TextStyle(
                                   fontSize: 20,
                                   color: Colors.white,
@@ -126,8 +129,8 @@ class ConnectionCard extends StatelessWidget {
                                 flex: 9,
                                 // child: InkWell(
                                 child: Text(
-                                  FUNDING_OPTIONS[
-                                      connection['funding_required']],
+                                  FUNDING_OPTIONS[connection['budget']],
+                                  // 'Budget',
                                   style: TextStyle(
                                       fontSize: 18, color: Colors.white),
                                 ),
@@ -166,6 +169,7 @@ class ConnectionCard extends StatelessWidget {
                                 // child: InkWell(
                                 child: Text(
                                   connection['email'],
+                                  // "email",
                                   style: TextStyle(
                                       fontSize: 18, color: Colors.white),
                                 ),
@@ -204,6 +208,7 @@ class ConnectionCard extends StatelessWidget {
                                 // child: InkWell(
                                 child: Text(
                                   connection['phone_no'],
+                                  // 'phone_no',
                                   style: TextStyle(
                                       fontSize: 18, color: Colors.white),
                                 ),
@@ -249,6 +254,7 @@ class ConnectionCard extends StatelessWidget {
                                 // child: InkWell(
                                 child: Text(
                                   connection['whatsapp_no'],
+                                  // 'whatsapp_no',
                                   style: TextStyle(
                                       fontSize: 18, color: Colors.white),
                                 ),
@@ -298,6 +304,7 @@ class ConnectionCard extends StatelessWidget {
                                     connection['location']['city'] +
                                         ', ' +
                                         connection['location']['country'],
+                                    // "Country, City",
                                     style: TextStyle(
                                         fontSize: 18, color: Colors.white),
                                   ),
@@ -357,6 +364,8 @@ class ConnectionCard extends StatelessWidget {
                         FlutterOpenWhatsapp.sendSingleMessage(
                             connection['whatsapp_no'].toString().substring(1),
                             "Hello!");
+                        // FlutterOpenWhatsapp.sendSingleMessage(
+                        //     "+917738478888".toString().substring(1), "Hello!");
                       },
                       // onPressed: () async => await launch(
                       //     "https://wa.me/+917977754834?text=Hello"),

@@ -13,3 +13,5 @@ bool fromForgotPassword = false;
 List connections = new List();
 List bookmarks = new List();
 List videos = new List();
+
+var pitchVideo;

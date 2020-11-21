@@ -12,7 +12,7 @@ class CustomUser {
   String specify = "";
   String description = "";
   String profilePicUrl = "";
-  String videoUrl = "";
+  String videoId = "";
   int connects = 0;
   int funding;
 }

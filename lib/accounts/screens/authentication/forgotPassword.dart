@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:razzom/accounts/screens/authentication/authentication.dart';
 import 'package:razzom/accounts/screens/authentication/signin.dart';
 import 'package:razzom/razzom/shared/data/vars.dart';
 import 'package:razzom/razzom/shared/screens/constants.dart';
@@ -111,10 +112,11 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             if (_formKey.currentState.validate()) {
                               try {
                                 fromForgotPassword = true;
+                                showSignIn = true;
                                 await _auth.resetPassword(email);
                                 Navigator.of(context).pushAndRemoveUntil(
                                     MaterialPageRoute(
-                                        builder: (context) => SignIn()),
+                                        builder: (context) => Authentication()),
                                     (Route<dynamic> route) => false);
                               } catch (e) {
                                 print(e);

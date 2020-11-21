@@ -554,7 +554,7 @@ class _RegisterState extends State<Register> {
                           Visibility(
                             visible: investorOptions,
                             child: Container(
-                              width: 250,
+                              // width: 250,
                               child: DropdownButtonFormField(
                                   isDense: true,
                                   hint: Text(
