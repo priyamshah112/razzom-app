@@ -85,24 +85,38 @@ class _ConnectionsState extends State<Connections> {
                       // height: MediaQuery.of(context).copyWith().size.height *
                       //         (100 / 100) -
                       //     169,
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
-                        child: (connections.length == 0)
-                            ? Padding(
-                                padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                child: Text(
-                                  'No connections yet!',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 18),
-                                  textAlign: TextAlign.center,
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
+                          child: (connections.length == 0)
+                              ? Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        'No connections yet!',
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 18),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      SizedBox(height: 20),
+                                      // ConnectionCard(
+                                      //   index: 0,
+                                      // ),
+                                      // ConnectionCard(
+                                      //   index: 1,
+                                      // ),
+                                    ],
+                                  ),
+                                )
+                              : ListView.builder(
+                                  itemCount: connections.length,
+                                  itemBuilder: (context, i) {
+                                    return ConnectionCard(index: i);
+                                  },
                                 ),
-                              )
-                            : ListView.builder(
-                                itemCount: connections.length,
-                                itemBuilder: (context, i) {
-                                  return ConnectionCard(index: i);
-                                },
-                              ),
+                        ),
                       ),
                     );
                   } else {

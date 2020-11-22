@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:razzom/accounts/services/auth.dart';
 import 'package:razzom/entrepreneur/screens/drawer.dart';
+import 'package:razzom/entrepreneur/screens/drawer2.dart';
 import 'package:razzom/entrepreneur/screens/update_profile.dart';
 import 'package:razzom/entrepreneur/screens/upload_video.dart';
 import 'package:razzom/razzom/shared/data/lists.dart';
@@ -53,7 +54,20 @@ class _EdashboardState extends State<Edashboard> {
           // ),
         ],
       ),
-      drawer: CustomDrawer(),
+      drawer: FutureBuilder(
+          future: DatabaseService(uid: uid).getUserData(),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.hasData) {
+              if (currentUser.videoId != null) {
+                return CustomDrawer();
+              } else {
+                fromEdashboard = true;
+                return CustomDrawer2();
+              }
+            } else {
+              return CustomDrawer();
+            }
+          }),
       body: FutureBuilder(
         future: DatabaseService(uid: uid).getUserData(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -64,7 +78,73 @@ class _EdashboardState extends State<Edashboard> {
               // Navigator.of(context).pushAndRemoveUntil(
               //     MaterialPageRoute(builder: (context) => UploadVideo()),
               //     (Route<dynamic> route) => false);
-              return UploadVideo();
+              // return UploadVideo();
+              return Container(
+                padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 15.0),
+                width:
+                    MediaQuery.of(context).copyWith().size.width * (100 / 100),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width:
+                                MediaQuery.of(context).copyWith().size.width *
+                                    (85 / 100),
+                            child: Text(
+                              "Upload your Pitch Video to get started!",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 25),
+                              textAlign: TextAlign.center,
+                              softWrap: true,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Visibility(
+                        visible: true,
+                        child: SizedBox(
+                          height: 25,
+                        ),
+                      ),
+                      Visibility(
+                        visible: true,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            RaisedButton(
+                              color: Color(0xFF0CE5DF),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                side: BorderSide(
+                                  color: Color(0xFF0CE5DF),
+                                ),
+                              ),
+                              child: Text(
+                                'Upload Video',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => UploadVideo()));
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
             } else {
               return Container(
                 padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 15.0),

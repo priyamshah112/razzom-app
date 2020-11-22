@@ -58,14 +58,19 @@ class _UploadVideoState extends State<UploadVideo> {
           future: DatabaseService(uid: uid).getPitchVideo(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
-              // print("videoID: " + currentUser.videoId);
-              if (currentUser.videoId == null) {
-                title = "";
-                videoUrl = "";
-              } else {
-                // title = "Title";
-                title = pitchVideo['title'];
-                videoUrl = pitchVideo['url'];
+              if (!fileUploaded && !fileUploading) {
+                // ISSUE IN VIDEO UPLOAD AFTER TITLE CHANGE
+                // print("videoID: " + currentUser.videoId);
+                if (currentUser.videoId == null) {
+                  title = "";
+                  videoUrl = "";
+                } else {
+                  // title = "Title";
+                  if (!fileUploaded && !fileUploading) {
+                    title = pitchVideo['title'];
+                    videoUrl = pitchVideo['url'];
+                  }
+                }
               }
               return Container(
                 color: Color(0xFF162F42),
@@ -407,6 +412,7 @@ class _UploadVideoState extends State<UploadVideo> {
                                 ),
                                 RaisedButton(
                                   color: Color(0xFF0CE5DF),
+                                  disabledColor: Colors.grey,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12.0),
                                     side: BorderSide(
@@ -420,24 +426,45 @@ class _UploadVideoState extends State<UploadVideo> {
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold),
                                   ),
-                                  onPressed: () async {
-                                    // print(user);
-                                    if (_formKey.currentState.validate()) {
-                                      print("Validated" + title);
-
-                                      await DatabaseService(uid: uid)
-                                          .updatePitchVideo(
-                                              title, videoUrl, fileUploaded);
-                                      // dynamic result =
-                                      //     await DatabaseService(uid: uid)
-                                      //         .getUserData();
-                                      Navigator.of(context).pushAndRemoveUntil(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  VideoPitch()),
-                                          (Route<dynamic> route) => false);
-                                    }
-                                  },
+                                  onPressed: fileUploading
+                                      ? null
+                                      : () async {
+                                          // print(user);
+                                          if (_formKey.currentState
+                                              .validate()) {
+                                            print("Validated" + title);
+                                            if (title == "" || videoUrl == "") {
+                                              error = "Please fill all fields";
+                                            } else {
+                                              await DatabaseService(uid: uid)
+                                                  .updatePitchVideo(title,
+                                                      videoUrl, fileUploaded);
+                                              // dynamic result =
+                                              //     await DatabaseService(uid: uid)
+                                              //         .getUserData();
+                                              if (fromEdashboard) {
+                                                fromEdashboard = false;
+                                                Navigator.of(context)
+                                                    .pushAndRemoveUntil(
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                Edashboard()),
+                                                        (Route<dynamic>
+                                                                route) =>
+                                                            false);
+                                              } else {
+                                                Navigator.of(context)
+                                                    .pushAndRemoveUntil(
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                VideoPitch()),
+                                                        (Route<dynamic>
+                                                                route) =>
+                                                            false);
+                                              }
+                                            }
+                                          }
+                                        },
                                 ),
                                 SizedBox(
                                   height: 10.0,

@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:razzom/accounts/screens/authentication/authentication.dart';
 import 'package:razzom/accounts/screens/authentication/signin.dart';
 import 'package:razzom/accounts/services/auth.dart';
+import 'package:razzom/entrepreneur/screens/upload_video.dart';
 import 'package:razzom/entrepreneur/screens/videoPitch.dart';
 import 'package:razzom/entrepreneur/screens/connections.dart';
 import 'package:razzom/entrepreneur/screens/settings.dart';
 import 'package:razzom/razzom/shared/data/vars.dart';
 
-class CustomDrawer extends StatelessWidget {
+class CustomDrawer2 extends StatelessWidget {
   final AuthService _auth = AuthService();
 
   @override
@@ -17,28 +18,8 @@ class CustomDrawer extends StatelessWidget {
         color: Color(0xFF0C1A24),
         child: ListView(
           children: <Widget>[
-            // Container(
-            //   padding: EdgeInsets.all(10),
-            //   color: Color(0xFF0C1A24),
-            //   child: new ListTile(
-            //     leading: Icon(
-            //       Icons.person,
-            //       color: Colors.white,
-            //       size: 30,
-            //     ),
-            //     title: Text(
-            //       'Dashboard',
-            //       style: TextStyle(color: Colors.white, fontSize: 20),
-            //     ),
-            //     onTap: () {
-            //       Navigator.push(context,
-            //           MaterialPageRoute(builder: (context) => Idashboard()));
-            //     },
-            //   ),
-            // ),
             Container(
               padding: EdgeInsets.all(10),
-              color: Color(0xFF0C1A24),
               child: new ListTile(
                 leading: Icon(
                   Icons.videocam,
@@ -46,52 +27,34 @@ class CustomDrawer extends StatelessWidget {
                   size: 30,
                 ),
                 title: Text(
-                  'Video Pitch',
+                  'Upload Video',
                   style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
                 onTap: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => VideoPitch()));
+                      MaterialPageRoute(builder: (context) => UploadVideo()));
                 },
               ),
             ),
-            Container(
-              padding: EdgeInsets.all(10),
-              child: new ListTile(
-                leading: Icon(
-                  Icons.people,
-                  color: Colors.white,
-                  size: 30,
-                ),
-                title: Text(
-                  'Connections',
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Connections()));
-                },
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.all(10),
-              color: Color(0xFF0C1A24),
-              child: new ListTile(
-                leading: Icon(
-                  Icons.settings,
-                  color: Colors.white,
-                  size: 30,
-                ),
-                title: Text(
-                  'Settings',
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                ),
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Settings()));
-                },
-              ),
-            ),
+            // Container(
+            //   padding: EdgeInsets.all(10),
+            //   color: Color(0xFF0C1A24),
+            //   child: new ListTile(
+            //     leading: Icon(
+            //       Icons.settings,
+            //       color: Colors.white,
+            //       size: 30,
+            //     ),
+            //     title: Text(
+            //       'Settings',
+            //       style: TextStyle(color: Colors.white, fontSize: 20),
+            //     ),
+            //     onTap: () {
+            //       Navigator.push(context,
+            //           MaterialPageRoute(builder: (context) => Settings()));
+            //     },
+            //   ),
+            // ),
             Container(
               padding: EdgeInsets.all(10),
               color: Color(0xFF0C1A24),

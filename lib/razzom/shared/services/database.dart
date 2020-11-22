@@ -171,7 +171,7 @@ class DatabaseService {
           .where('entrepreneur_id', isEqualTo: uid)
           .get();
       print("data received");
-      for (var i = 0; i < 1; i++) {
+      for (var i = 0; i < connectionsData.size; i++) {
         var investorId = connectionsData.docs[i].data()['investor_id'];
         var connection = await investorCollection.doc(investorId).get();
         print(connection.data().toString());
@@ -250,7 +250,9 @@ class DatabaseService {
         'updated_on': date,
       });
 
-      await getUserData();
+      currentUser.videoId = newVideoData.docs[0].id;
+
+      // await getUserData();
     } else {
       print("else");
       print(title);

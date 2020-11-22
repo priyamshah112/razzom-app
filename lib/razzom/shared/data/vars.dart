@@ -9,6 +9,7 @@ String signinError = "";
 String registerError = "";
 bool fromRegister = false;
 bool fromForgotPassword = false;
+bool fromEdashboard = false;
 
 List connections = new List();
 List bookmarks = new List();

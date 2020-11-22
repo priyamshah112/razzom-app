@@ -269,6 +269,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                         ),
                         RaisedButton(
                           color: Color(0xFF0CE5DF),
+                          disabledColor: Colors.grey,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12.0),
                             side: BorderSide(
@@ -282,26 +283,30 @@ class _UpdateProfileState extends State<UpdateProfile> {
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold),
                           ),
-                          onPressed: () async {
-                            // print(user);
-                            if (_formKey.currentState.validate()) {
-                              print("Validated");
+                          onPressed: fileUploading
+                              ? null
+                              : () async {
+                                  // print(user);
+                                  if (_formKey.currentState.validate()) {
+                                    print("Validated");
 
-                              await DatabaseService(uid: uid).updateUserData(
-                                  // name,
-                                  phone,
-                                  whatsapp,
-                                  funding,
-                                  profilePicUrl,
-                                  description);
-                              dynamic result =
-                                  await DatabaseService(uid: uid).getUserData();
-                              Navigator.of(context).pushAndRemoveUntil(
-                                  MaterialPageRoute(
-                                      builder: (context) => Edashboard()),
-                                  (Route<dynamic> route) => false);
-                            }
-                          },
+                                    await DatabaseService(uid: uid)
+                                        .updateUserData(
+                                            // name,
+                                            phone,
+                                            whatsapp,
+                                            funding,
+                                            profilePicUrl,
+                                            description);
+                                    dynamic result =
+                                        await DatabaseService(uid: uid)
+                                            .getUserData();
+                                    Navigator.of(context).pushAndRemoveUntil(
+                                        MaterialPageRoute(
+                                            builder: (context) => Edashboard()),
+                                        (Route<dynamic> route) => false);
+                                  }
+                                },
                         ),
                         SizedBox(
                           height: 10.0,

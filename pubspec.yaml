@@ -47,6 +47,7 @@ dependencies:
   flutter_open_whatsapp: ^0.1.2
   mime_type: ^0.3.2
   font_awesome_flutter: ^8.10.0
+  flip_card: ^0.4.4
 
 dev_dependencies:
   flutter_test:
