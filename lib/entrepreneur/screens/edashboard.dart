@@ -170,13 +170,14 @@ class _EdashboardState extends State<Edashboard> {
                                       shape: BoxShape.circle,
                                       image: new DecorationImage(
                                         fit: BoxFit.fill,
-                                        image: AssetImage(
-                                            'assets/images/profile.png'),
-                                        // image: (currentUser.profilePicUrl != null)
-                                        //     ? NetworkImage(
-                                        //         currentUser.profilePicUrl)
-                                        //     : AssetImage(
-                                        //         'assets/images/profile.png'),
+                                        // image: AssetImage(
+                                        //     'assets/images/profile.png'),
+                                        image: (currentUser.profilePicUrl !=
+                                                null)
+                                            ? NetworkImage(
+                                                currentUser.profilePicUrl)
+                                            : AssetImage(
+                                                'assets/images/profile.png'),
                                       ),
                                     ),
                                   ),

@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mime/mime.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:razzom/entrepreneur/screens/edashboard.dart';
 import 'package:razzom/entrepreneur/screens/videoPitch.dart';
@@ -17,6 +18,7 @@ import 'package:razzom/razzom/shared/screens/constants.dart';
 import 'package:flutter/widgets.dart';
 import 'package:razzom/razzom/shared/services/database.dart';
 import 'package:mime_type/mime_type.dart';
+import 'package:path/path.dart' as path;
 
 class UploadVideo extends StatefulWidget {
   @override
@@ -379,7 +381,7 @@ class _UploadVideoState extends State<UploadVideo> {
                                     videoErrorText,
                                     style: TextStyle(
                                       color: Colors.red,
-                                      fontSize: 10.0,
+                                      fontSize: 12.0,
                                     ),
                                   ),
                                 ),
@@ -497,8 +499,10 @@ class _UploadVideoState extends State<UploadVideo> {
   }
 
   uploadVideo() async {
-    videoError = false;
-    videoErrorText = "";
+    setState(() {
+      videoError = false;
+      videoErrorText = "";
+    });
     final _storage = FirebaseStorage.instance;
     final _picker = ImagePicker();
     PickedFile video;
@@ -517,12 +521,20 @@ class _UploadVideoState extends State<UploadVideo> {
 
       if (video != null) {
         var file = File(video.path);
-        print("mime: " + mime(video.path));
+        // print("mime: " + mime(video.path));
+        print("mime: " + (lookupMimeType(video.path)));
+        // print("extension: " + p.extension);
+        print(path.basename(video.path));
+        String mimeType = mime(video.path).toString();
+        // print(mime(video.path).toString().compareTo("image/jpeg"));
+
         // .mp4,.mov,.wmv,.flv,.avi,.webm,.mkv
-        // if (mime(video.path).toString().compareTo("image") == 0 ||
-        //     mime(video.path).toString().compareTo("image/jpg") == 0 ||
-        //     mime(video.path).toString().compareTo("image/png") == 0) {
-        if (true) {
+        if (mimeType.compareTo("image/jpeg") == 0
+            // ||
+            //     mimeType.compareTo("image/jpg") == 0 ||
+            //     mimeType.compareTo("video/wmv") == 0
+            ) {
+          // if (true) {
           var enc = await file.readAsBytes();
           print("LENGTH: " + enc.length.toString());
           if (enc.length < maxSize) {
@@ -530,6 +542,7 @@ class _UploadVideoState extends State<UploadVideo> {
             // Upload to firebase
             setState(() {
               fileUploading = true;
+              fileUploaded = false;
             });
 
             var uploadTask =
@@ -550,14 +563,18 @@ class _UploadVideoState extends State<UploadVideo> {
                 .then((url) => {videoUrl = url});
           } else {
             print('Invalid size');
-            videoError = true;
-            videoErrorText = "File must be less than 5MB";
+            setState(() {
+              videoError = true;
+              videoErrorText = "File must be less than 50 MB";
+            });
           }
         } else {
           print('Invalid type');
           // print(mime(video.path).toString().compareTo("image/jpeg"));
-          videoError = true;
-          videoErrorText = "Invalid file type";
+          setState(() {
+            videoError = true;
+            videoErrorText = "Invalid file type";
+          });
         }
       } else {
         print("No path received");
