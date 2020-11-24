@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:razzom/accounts/screens/authentication/forgotPassword.dart';
+import 'package:razzom/accounts/screens/wrapper.dart';
+import 'package:razzom/investor/screens/idashboard.dart';
+import 'package:razzom/razzom/shared/data/vars.dart';
 import 'package:razzom/razzom/shared/screens/constants.dart';
 import 'package:razzom/razzom/shared/screens/loader.dart';
 import 'package:razzom/accounts/services/auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class SignIn extends StatefulWidget {
   final Function toggleView;
@@ -13,15 +18,97 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
-  bool loading = false;
   String email = "";
   String password = "";
-  String error = "";
+
+  FToast fToast;
+  FToast fToast2;
+
+  @override
+  void initState() {
+    super.initState();
+    fToast = FToast();
+    fToast.init(context);
+    fToast2 = FToast();
+    fToast2.init(context);
+    loading = false;
+  }
+
+  _showToast() {
+    Widget toast = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25.0),
+        color: Color(0xFF0C1A24),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.mail,
+            color: Colors.white,
+          ),
+          SizedBox(
+            width: 12.0,
+          ),
+          Text(
+            "Please verify your email before signing in.",
+            style: TextStyle(color: Colors.white),
+          ),
+        ],
+      ),
+    );
+
+    fToast.showToast(
+      child: toast,
+      gravity: ToastGravity.BOTTOM,
+      toastDuration: Duration(seconds: 5),
+    );
+  }
+
+  _showToast2() {
+    Widget toast = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25.0),
+        color: Color(0xFF0C1A24),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            "Password reset link sent to your email.",
+            style: TextStyle(color: Colors.white),
+          ),
+        ],
+      ),
+    );
+
+    fToast2.showToast(
+      child: toast,
+      gravity: ToastGravity.BOTTOM,
+      toastDuration: Duration(seconds: 5),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (loading) {
       return Loader();
     } else {
+      if (fromRegister) {
+        fromRegister = false;
+        Future.delayed(Duration.zero, () async {
+          _showToast();
+        });
+      }
+      if (fromForgotPassword) {
+        fromForgotPassword = false;
+        Future.delayed(Duration.zero, () async {
+          _showToast2();
+        });
+      }
+
       return Scaffold(
         appBar: AppBar(
           title: Text(
@@ -37,7 +124,7 @@ class _SignInState extends State<SignIn> {
           backgroundColor: Color(0xFF0C1A24),
         ),
         body: Container(
-          padding: EdgeInsets.symmetric(vertical: 50.0, horizontal: 30.0),
+          padding: EdgeInsets.symmetric(vertical: 30.0, horizontal: 30.0),
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -93,6 +180,7 @@ class _SignInState extends State<SignIn> {
                                 email = val;
                               });
                             },
+                            textInputAction: TextInputAction.next,
                           ),
                           SizedBox(
                             height: 16.0,
@@ -101,15 +189,15 @@ class _SignInState extends State<SignIn> {
                             style: TextStyle(color: Colors.white),
                             decoration: textInputDecoration.copyWith(
                                 hintText: 'Password'),
-                            validator: (val) => val.length < 6
-                                ? 'Enter an password 6+ characters long'
-                                : null,
+                            validator: (val) =>
+                                val.isEmpty ? 'Enter a password' : null,
                             obscureText: true,
                             onChanged: (val) {
                               setState(() {
                                 password = val;
                               });
                             },
+                            textInputAction: TextInputAction.done,
                           ),
                           SizedBox(
                             height: 20.0,
@@ -133,25 +221,53 @@ class _SignInState extends State<SignIn> {
                               if (_formKey.currentState.validate()) {
                                 setState(() {
                                   loading = true;
+                                  signinError = "";
                                 });
-                                dynamic result =
-                                    await _auth.signInWithEmailAndPassword(
-                                        email, password);
-                                print("signin");
-                                if (result == null) {
+                                dynamic result;
+                                try {
+                                  result =
+                                      await _auth.signInWithEmailAndPassword(
+                                          email, password);
+                                  print("signin");
+                                  if (result == null) {
+                                    setState(() {
+                                      signinError =
+                                          "Invalid Credentials. Please try again.";
+                                      loading = false;
+                                    });
+                                  } else {
+                                    print(result);
+
+                                    Navigator.of(context).pushAndRemoveUntil(
+                                        MaterialPageRoute(
+                                            builder: (context) => Idashboard()),
+                                        (Route<dynamic> route) => false);
+                                  }
+                                  // setState(() {
+                                  //   loading = false;
+                                  // });
+                                  // Navigator.of(context).pushAndRemoveUntil(
+                                  //     MaterialPageRoute(
+                                  //         builder: (context) => Idashboard()),
+                                  //     (Route<dynamic> route) => false);
+                                } catch (e) {
+                                  print(e);
                                   setState(() {
-                                    error = "ERROR";
+                                    signinError = e.toString();
                                     loading = false;
                                   });
                                 }
                               }
                             },
                           ),
-                          SizedBox(
-                            height: 10.0,
+                          Visibility(
+                            visible: !(signinError == ""),
+                            child: SizedBox(
+                              height: 10.0,
+                            ),
                           ),
                           Text(
-                            error,
+                            signinError,
                             style: TextStyle(
                               color: Colors.red,
                               fontSize: 10.0,
@@ -178,19 +294,63 @@ class _SignInState extends State<SignIn> {
                               ),
                             ),
                           ),
+                          FlatButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ForgotPassword(),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              'Forgot Password?',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 InkWell(
-                                  // onTap: signInWithGoogle(),
+                                  onTap: () async {
+                                    setState(() {
+                                      loading = true;
+                                    });
+                                    dynamic result =
+                                        await _auth.signInWithGoogle();
+                                    print("RESULT: " + result.toString());
+                                    if (result == null) {
+                                      setState(() {
+                                        signinError =
+                                            "An error occured. Please try again.";
+                                        loading = false;
+                                      });
+                                    }
+                                    // else {
+                                    //   print('signin else reached');
+                                    // Navigator.pushReplacement(
+                                    //   context,
+                                    //   MaterialPageRoute(
+                                    //       builder: (context) => Wrapper()),
+                                    // );
+                                    setState(() {
+                                      loading = false;
+                                    });
+                                    // }
+                                  },
                                   child: Container(
                                     child: Image.asset(
                                       'assets/images/google.png',
                                       scale: 2,
                                     ),
                                   ),
+                                ),
+                                SizedBox(
+                                  height: 10.0,
                                 ),
                               ],
                             ),

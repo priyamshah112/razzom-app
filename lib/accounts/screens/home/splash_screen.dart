@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:razzom/accounts/screens/wrapper.dart';
 
@@ -12,6 +11,7 @@ class _SplashState extends State<Splash> {
   @override
   void initState() {
     super.initState();
+
     Timer(
         Duration(seconds: 3),
         () => Navigator.pushReplacement(

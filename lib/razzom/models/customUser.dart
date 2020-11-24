@@ -10,5 +10,9 @@ class CustomUser {
   String entrepreneurOffering = "";
   String investorType = "";
   String specify = "";
+  String description = "";
+  String profilePicUrl = "";
+  String videoUrl = "";
+  int connects = 0;
   int funding;
 }
