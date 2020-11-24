@@ -37,6 +37,7 @@ class Wrapper extends StatelessWidget {
                 if (currentUser.userType == "Investor") {
                   return Idashboard();
                 } else {
+                  print("returned Edashboard");
                   return Edashboard();
                 }
               } else {

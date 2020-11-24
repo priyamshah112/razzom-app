@@ -270,12 +270,19 @@ class _UpdateProfileState extends State<UpdateProfile> {
                         RaisedButton(
                           color: Color(0xFF0CE5DF),
                           disabledColor: Colors.grey,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                            side: BorderSide(
-                              color: Color(0xFF0CE5DF),
-                            ),
-                          ),
+                          shape: fileUploading
+                              ? RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  side: BorderSide(
+                                    color: Colors.grey,
+                                  ),
+                                )
+                              : RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  side: BorderSide(
+                                    color: Color(0xFF0CE5DF),
+                                  ),
+                                ),
                           child: Text(
                             'Update',
                             style: TextStyle(
@@ -348,7 +355,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
 
       // var fileSize = await file.length();
       // print("file size: " + fileSize.toString());
-      var maxSize = 5 * pow(10, 5);
+      var maxSize = 5 * 1024 * 1024;
 
       if (image != null) {
         var file = File(image.path);

@@ -55,25 +55,27 @@ class _EdashboardState extends State<Edashboard> {
         ],
       ),
       drawer: FutureBuilder(
-          future: DatabaseService(uid: uid).getUserData(),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.hasData) {
-              if (currentUser.videoId != null) {
-                return CustomDrawer();
-              } else {
-                fromEdashboard = true;
-                return CustomDrawer2();
-              }
-            } else {
+        future: DatabaseService(uid: uid).getUserData(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            if (currentUser.videoId != null) {
               return CustomDrawer();
+            } else {
+              fromEdashboard = true;
+              return CustomDrawer2();
             }
-          }),
+          } else {
+            return CustomDrawer();
+          }
+        },
+      ),
       body: FutureBuilder(
         future: DatabaseService(uid: uid).getUserData(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             // print("videoId: " + currentUser.videoId.toString());
             if (currentUser.videoId == null) {
+              print("video id null on entrepreneur dashboard");
               // if (false) {
               // Navigator.of(context).pushAndRemoveUntil(
               //     MaterialPageRoute(builder: (context) => UploadVideo()),
@@ -170,14 +172,14 @@ class _EdashboardState extends State<Edashboard> {
                                       shape: BoxShape.circle,
                                       image: new DecorationImage(
                                         fit: BoxFit.fill,
-                                        // image: AssetImage(
-                                        //     'assets/images/profile.png'),
-                                        image: (currentUser.profilePicUrl !=
-                                                null)
-                                            ? NetworkImage(
-                                                currentUser.profilePicUrl)
-                                            : AssetImage(
-                                                'assets/images/profile.png'),
+                                        image: AssetImage(
+                                            'assets/images/profile.png'),
+                                        // image: (currentUser.profilePicUrl !=
+                                        //         null)
+                                        //     ? NetworkImage(
+                                        //         currentUser.profilePicUrl)
+                                        //     : AssetImage(
+                                        //         'assets/images/profile.png'),
                                       ),
                                     ),
                                   ),

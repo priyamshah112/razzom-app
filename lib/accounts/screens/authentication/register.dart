@@ -1,5 +1,6 @@
 import 'package:country_list_pick/country_list_pick.dart';
 import 'package:flutter/material.dart';
+import 'package:razzom/accounts/screens/authentication/authentication.dart';
 import 'package:razzom/accounts/screens/authentication/signin.dart';
 import 'package:razzom/razzom/models/customUser.dart';
 import 'package:razzom/razzom/shared/data/lists.dart';
@@ -53,6 +54,9 @@ class _RegisterState extends State<Register> {
     if (loading) {
       return Loader();
     } else {
+      setState(() {
+        registerError = "";
+      });
       return Scaffold(
         appBar: AppBar(
           title: Text(
@@ -147,7 +151,7 @@ class _RegisterState extends State<Register> {
                           TextFormField(
                             style: TextStyle(color: Colors.white),
                             decoration: textInputDecoration.copyWith(
-                                hintText: 'Whatsapp Number'),
+                                hintText: 'Whatsapp Number (Eg: +971123456)'),
                             validator: (val) => val.isEmpty
                                 ? 'Enter a valid whatsapp number'
                                 : null,
@@ -617,13 +621,21 @@ class _RegisterState extends State<Register> {
                                         "Sign up failed. Please try again.";
                                     loading = false;
                                   });
+                                  await _auth.signOut().then((res) {
+                                    showSignIn = true;
+                                    Navigator.of(context).pushAndRemoveUntil(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                Authentication()),
+                                        (Route<dynamic> route) => false);
+                                  });
                                 }
                                 // setState(() {
                                 //   loading = false;
                                 // });
                                 Navigator.of(context).pushAndRemoveUntil(
                                     MaterialPageRoute(
-                                        builder: (context) => SignIn()),
+                                        builder: (context) => Authentication()),
                                     (Route<dynamic> route) => false);
                               }
                             },

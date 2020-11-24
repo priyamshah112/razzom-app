@@ -415,12 +415,21 @@ class _UploadVideoState extends State<UploadVideo> {
                                 RaisedButton(
                                   color: Color(0xFF0CE5DF),
                                   disabledColor: Colors.grey,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12.0),
-                                    side: BorderSide(
-                                      color: Color(0xFF0CE5DF),
-                                    ),
-                                  ),
+                                  shape: fileUploading
+                                      ? RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12.0),
+                                          side: BorderSide(
+                                            color: Colors.grey,
+                                          ),
+                                        )
+                                      : RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12.0),
+                                          side: BorderSide(
+                                            color: Color(0xFF0CE5DF),
+                                          ),
+                                        ),
                                   child: Text(
                                     'Upload',
                                     style: TextStyle(
@@ -517,12 +526,12 @@ class _UploadVideoState extends State<UploadVideo> {
 
       // var fileSize = await file.length();
       // print("file size: " + fileSize.toString());
-      var maxSize = 50 * pow(10, 5);
+      var maxSize = 50 * 1024 * 1024;
 
       if (video != null) {
         var file = File(video.path);
-        // print("mime: " + mime(video.path));
-        print("mime: " + (lookupMimeType(video.path)));
+        print("mime: " + mime(file.path));
+        // print("mime: " + (lookupMimeType(video.path)));
         // print("extension: " + p.extension);
         print(path.basename(video.path));
         String mimeType = mime(video.path).toString();
