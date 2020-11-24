@@ -78,8 +78,8 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
       child: Padding(
         padding: const EdgeInsets.all(0.0),
         child: Container(
-          width: MediaQuery.of(context).copyWith().size.width,
-          height: 200,
+          width: MediaQuery.of(context).copyWith().size.width * 0.9,
+          height: 250,
           child: Chewie(
             controller: _chewieController,
           ),

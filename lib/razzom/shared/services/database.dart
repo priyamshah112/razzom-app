@@ -107,53 +107,166 @@ class DatabaseService {
     }
   }
 
-  Future getData() async {
-    print("Getting user data");
-    await getUserData();
-    await getConnections();
-    await getBookmarks();
-    await getVideos();
-    // return true;
+  // Future getData() async {
+  //   print("Getting user data");
+  //   await getUserData();
+  //   await getConnections();
+  //   await getBookmarks();
+  //   await getVideos();
+  //   // return true;
+  // }
+
+  Future getInitialData() async {
+    print("Getting Initial data");
+    var userType = await userCollection.doc(uid).get();
+    print(userType);
+    currentUser.userType = userType.data()['type'];
+    print("user type: " + currentUser.userType);
+    return "Done";
   }
 
   Future getUserData() async {
     print('get user data called');
-    var userType = await userCollection.doc(uid).get();
-    currentUser.userType = userType.data()['type'];
-    var userData = await investorCollection.doc(uid).get();
-    var currentUserData = userData.data();
-    currentUser.name = currentUserData['name'];
-    currentUser.phone = currentUserData['phone_no'];
-    currentUser.whatsapp = currentUserData['whatsapp_no'];
-    currentUser.email = currentUserData['email'];
-    currentUser.funding = currentUserData['budget'];
-    currentUser.description = currentUserData['intro'];
-    currentUser.connects = currentUserData['connects_avail'];
-    currentUser.investorType = currentUserData['investor_type'];
-    currentUser.profilePicUrl = currentUserData['profile_pic'];
-    currentUser.location['city'] = currentUserData['location']['city'];
-    currentUser.location['country'] = currentUserData['location']['country'];
+    if (currentUser.userType == "Entrepreneur") {
+      print("Entrepreneur DB");
+      var userData = await entrepreneurCollection.doc(uid).get();
+      var currentUserData = userData.data();
+      currentUser.name = currentUserData['name'];
+      currentUser.phone = currentUserData['phone_no'];
+      currentUser.whatsapp = currentUserData['whatsapp_no'];
+      currentUser.email = currentUserData['email'];
+      currentUser.funding = currentUserData['funding_required'];
+      currentUser.entrepreneurOffering = currentUserData['industry'];
+      currentUser.videoId = currentUserData['video_id'];
+      currentUser.profilePicUrl = currentUserData['profile_pic'];
+      currentUser.location['city'] = currentUserData['location']['city'];
+      currentUser.location['country'] = currentUserData['location']['country'];
+      print(currentUser.profilePicUrl);
+      return 'Done';
+    } else if (currentUser.userType == "Investor") {
+      print("Investor");
+      var userData = await investorCollection.doc(uid).get();
+      var currentUserData = userData.data();
+      currentUser.name = currentUserData['name'];
+      currentUser.phone = currentUserData['phone_no'];
+      currentUser.whatsapp = currentUserData['whatsapp_no'];
+      currentUser.email = currentUserData['email'];
+      currentUser.funding = currentUserData['budget'];
+      currentUser.description = currentUserData['intro'];
+      currentUser.connects = currentUserData['connects_avail'];
+      currentUser.investorType = currentUserData['investor_type'];
+      currentUser.profilePicUrl = currentUserData['profile_pic'];
+      currentUser.location['city'] = currentUserData['location']['city'];
+      currentUser.location['country'] = currentUserData['location']['country'];
 
-    print(currentUser.profilePicUrl);
-    // loading = false;
-    return 'Done';
+      print(currentUser.profilePicUrl);
+      return 'Done';
+    }
   }
 
   getConnections() async {
     connections.clear();
-    var connectionsData =
-        await connectionsCollection.where('investor_id', isEqualTo: uid).get();
-    print("data received");
-    for (var i = 0; i < connectionsData.size; i++) {
-      var entrepreneurId = connectionsData.docs[i].data()['entrepreneur_id'];
-      var connection = await entrepreneurCollection.doc(entrepreneurId).get();
-      if (!connection['is_deleted']) {
+    if (currentUser.userType == "Entrepreneur") {
+      var connectionsData = await connectionsCollection
+          .where('entrepreneur_id', isEqualTo: uid)
+          .get();
+      print("data received");
+      for (var i = 0; i < connectionsData.size; i++) {
+        var investorId = connectionsData.docs[i].data()['investor_id'];
+        var connection = await investorCollection.doc(investorId).get();
+        print(connection.data().toString());
+        // if (!connection['is_deleted']) {
         connections.add(connection);
         print('connection added');
+        // }
       }
+      print(connections);
+      return 'Done';
+    } else if (currentUser.userType == "Investor") {
+      var connectionsData = await connectionsCollection
+          .where('investor_id', isEqualTo: uid)
+          .get();
+      print("data received");
+      print(connectionsData.size);
+      for (var i = 0; i < connectionsData.size; i++) {
+        var entrepreneurId = connectionsData.docs[i].data()['entrepreneur_id'];
+        var connection = await entrepreneurCollection.doc(entrepreneurId).get();
+        if (!connection['is_deleted']) {
+          connections.add(connection);
+          print('connection added');
+        }
+      }
+      print(connections);
+      return 'Done';
     }
-    print(connections);
+  }
+
+  getPitchVideo() async {
+    if (currentUser.videoId != null) {
+      pitchVideo = await videosCollection.doc(currentUser.videoId).get();
+      print(pitchVideo.data().toString());
+      print(pitchVideo.data()['url']);
+    }
     return 'Done';
+  }
+
+  Future updatePitchVideo(
+      String title, String videoUrl, bool fileUploaded) async {
+    print("reached videos db update");
+    print(title);
+    var date = new DateTime.now();
+
+    // print(currentUser.userType);
+    if (fileUploaded) {
+      if (currentUser.videoId != null) {
+        var oldVideo = await videosCollection.doc(currentUser.videoId).update({
+          'is_deleted': true,
+          'deleted_on': date,
+        });
+      }
+
+      var newVideo = await videosCollection.doc().set({
+        'title': title,
+        'url': videoUrl,
+        'views_count': 0,
+        'reject_reason': "",
+        'funding_required': currentUser.funding,
+        'industry': currentUser.entrepreneurOffering,
+        'entrepreneur_id': uid,
+        'approval_status': "P",
+        'created_on': date,
+        'is_deleted': false,
+        'updated_on': null,
+        'deleted_on': null,
+      });
+
+      var newVideoData =
+          await videosCollection.where('url', isEqualTo: videoUrl).get();
+
+      print(newVideoData.docs[0].data().toString());
+
+      var updateEntrepreneur = await entrepreneurCollection.doc(uid).update({
+        'video_id': newVideoData.docs[0].id,
+        'updated_on': date,
+      });
+
+      currentUser.videoId = newVideoData.docs[0].id;
+
+      // await getUserData();
+    } else {
+      print("else");
+      print(title);
+      var oldVideo = await videosCollection.doc(currentUser.videoId).update({
+        'title': title,
+        // 'views_count': 0,
+        'reject_reason': "",
+        // 'funding_required': currentUser.funding,
+        // 'industry': currentUser.entrepreneurOffering,
+        'entrepreneur_id': uid,
+        'approval_status': "P",
+        'updated_on': date,
+      });
+    }
   }
 
   getBookmarks() async {

@@ -5,7 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:razzom/investor/screens/idashboard.dart';
+import 'package:razzom/entrepreneur/screens/edashboard.dart';
 // import 'package:image_cropper/image_cropper.dart';
 // import 'package:image_picker/image_picker.dart';
 import 'package:razzom/razzom/models/customUser.dart';
@@ -167,7 +167,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                                 value: currentUser.funding,
                                 isDense: true,
                                 hint: Text(
-                                  'Funding Budget',
+                                  'Funding Required',
                                   style: TextStyle(color: Colors.white),
                                 ),
                                 dropdownColor: Color(0xFF0C1A24),
@@ -247,23 +247,23 @@ class _UpdateProfileState extends State<UpdateProfile> {
                           visible: fileUploaded,
                           child: Text('File Uploaded!'),
                         ),
-                        SizedBox(
-                          height: 20.0,
-                        ),
-                        TextFormField(
-                          initialValue: currentUser.description,
-                          keyboardType: TextInputType.multiline,
-                          maxLines: null,
-                          style: TextStyle(color: Colors.white),
-                          decoration: textInputDecoration.copyWith(
-                              hintText: 'Description'),
-                          onChanged: (val) {
-                            setState(() {
-                              description = val;
-                            });
-                          },
-                          textInputAction: TextInputAction.done,
-                        ),
+                        // SizedBox(
+                        //   height: 20.0,
+                        // ),
+                        // TextFormField(
+                        //   initialValue: currentUser.description,
+                        //   keyboardType: TextInputType.multiline,
+                        //   maxLines: null,
+                        //   style: TextStyle(color: Colors.white),
+                        //   decoration: textInputDecoration.copyWith(
+                        //       hintText: 'Description'),
+                        //   onChanged: (val) {
+                        //     setState(() {
+                        //       description = val;
+                        //     });
+                        //   },
+                        //   textInputAction: TextInputAction.done,
+                        // ),
                         SizedBox(
                           height: 20.0,
                         ),
@@ -310,7 +310,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                                             .getUserData();
                                     Navigator.of(context).pushAndRemoveUntil(
                                         MaterialPageRoute(
-                                            builder: (context) => Idashboard()),
+                                            builder: (context) => Edashboard()),
                                         (Route<dynamic> route) => false);
                                   }
                                 },

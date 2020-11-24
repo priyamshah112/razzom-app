@@ -24,3 +24,28 @@ const textInputDecoration = InputDecoration(
     ),
   ),
 );
+
+const textInputDecoration2 = InputDecoration(
+  isDense: true,
+  hintStyle: TextStyle(
+    color: Colors.black,
+  ),
+  fillColor: Colors.grey,
+  filled: true,
+  border: OutlineInputBorder(
+    borderSide: BorderSide(
+      color: Colors.grey,
+    ),
+    borderRadius: const BorderRadius.all(
+      const Radius.circular(20.0),
+    ),
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderSide: BorderSide(
+      color: Colors.grey,
+    ),
+    borderRadius: const BorderRadius.all(
+      const Radius.circular(20.0),
+    ),
+  ),
+);
