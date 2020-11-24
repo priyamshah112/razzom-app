@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:razzom/razzom/models/customUser.dart';
+import 'package:razzom/razzom/models/customVideo.dart';
 import 'package:razzom/razzom/shared/data/vars.dart';
 
 class DatabaseService {
@@ -21,15 +22,15 @@ class DatabaseService {
 
   Future createUserData(CustomUser user) async {
     print("reached db start");
-    var createdOn = new DateTime.now();
+    var date = new DateTime.now();
     userCollection.doc(uid).set({
       'uid': uid,
       'email': user.email,
       'last_login': null,
       'type': user.userType,
-      'created_on': createdOn,
+      'created_on': date,
       'is_deleted': false,
-      'updated_on': null,
+      'updated_on': date,
       'deleted_on': null,
     });
     if (user.userType == "Entrepreneur") {
@@ -48,9 +49,9 @@ class DatabaseService {
         'funding_required': user.funding,
         'profile_pic': null,
         'video_id': null,
-        'created_on': createdOn,
+        'created_on': date,
         'is_deleted': false,
-        'updated_on': null,
+        'updated_on': date,
         'deleted_on': null,
       });
     } else if (user.userType == "Investor") {
@@ -69,9 +70,9 @@ class DatabaseService {
         'profile_pic': null,
         'connects_avail': 0,
         'intro': "",
-        'created_on': createdOn,
+        'created_on': date,
         'is_deleted': false,
-        'updated_on': null,
+        'updated_on': date,
         'deleted_on': null,
       });
     }
@@ -221,6 +222,7 @@ class DatabaseService {
       if (currentUser.videoId != null) {
         var oldVideo = await videosCollection.doc(currentUser.videoId).update({
           'is_deleted': true,
+          'updated_on': date,
           'deleted_on': date,
         });
       }
@@ -236,7 +238,7 @@ class DatabaseService {
         'approval_status': "P",
         'created_on': date,
         'is_deleted': false,
-        'updated_on': null,
+        'updated_on': date,
         'deleted_on': null,
       });
 
@@ -289,19 +291,69 @@ class DatabaseService {
   getVideos() async {
     print("reached get videos");
     videos.clear();
-    var videosData =
-        await videosCollection.where('approval_status', isEqualTo: "P").get();
+    var videosData = await videosCollection
+        .where('approval_status', isEqualTo: "A")
+        .where('is_deleted', isEqualTo: false)
+        .orderBy('updated_on', descending: true)
+        .get();
     print(videosData.size);
     for (var i = 0; i < videosData.size; i++) {
       // FILTER BOOKMARKED LATER
       var video = videosData.docs[i];
       // if (!video['is_deleted']) {
-      videos.add(video);
-      // print('video added: ' + video.data().toString());
+      // print(video.data().toString());
+      bool isConnected = false;
+      // String connectionId = "";
+      var connection = await connectionsCollection
+          .where('investor_id', isEqualTo: uid)
+          .where('entrepreneur_id', isEqualTo: video['entrepreneur_id'])
+          .where('is_deleted', isEqualTo: false)
+          .get();
+      if (connection.docs.length == 1) {
+        // print('connection: ' + connection.docs[0].data().toString());
+        isConnected = true;
+        // connectionId = connection.docs[0].id;
+      }
+      var bookmark = await bookmarksCollection
+          .where('investor_id', isEqualTo: uid)
+          .where('video_id', isEqualTo: video.id)
+          .where('is_deleted', isEqualTo: false)
+          .get();
+      bool isBookmarked = false;
+      String bookmarkId = "";
+      if (bookmark.docs.length == 1) {
+        // print('bookmark: ' + bookmark.docs[0].data().toString());
+        isBookmarked = true;
+        bookmarkId = bookmark.docs[0].id;
+      }
+
+      CustomVideo vid = new CustomVideo(
+        video.id,
+        video['title'],
+        video['url'],
+        isBookmarked,
+        bookmarkId,
+        isConnected,
+        video['entrepreneur_id'],
+        video['funding_required'],
+        video['industry'],
+      );
+      videos.add(vid);
+      if (isBookmarked) {
+        print("BOOKMARKEDDD");
+      }
+
+      // print('video added: ' + vid.title + " --> " + vid.url);
+
       // }
       // print(video.data());
       // print(connection);
     }
+    var userData = await investorCollection.doc(uid).get();
+    var currentUserData = userData.data();
+    currentUser.connects = currentUserData['connects_avail'];
+    print("connects: " + currentUser.connects.toString());
+    print(videos.length.toString());
     return 'Done';
   }
 
@@ -313,6 +365,42 @@ class DatabaseService {
       'is_deleted': true,
       'updated_on': date,
       'deleted_on': date,
+    });
+  }
+
+  Future createBookmark(CustomVideo video) async {
+    print("reached create bookmark");
+    var date = new DateTime.now();
+    bookmarksCollection.doc().set({
+      'investor_id': uid,
+      'entrepreneur_id': video.entrepreneurId,
+      'video_id': video.id,
+      'video_title': video.title,
+      'video_url': video.url,
+      'created_on': date,
+      'is_deleted': false,
+      'updated_on': date,
+      'deleted_on': null,
+    });
+  }
+
+  Future createConnection(String entrepreneurId) async {
+    print("reached create connection");
+    var date = new DateTime.now();
+    connectionsCollection.doc().set({
+      'investor_id': uid,
+      'entrepreneur_id': entrepreneurId,
+      'created_on': date,
+      'is_deleted': false,
+      'updated_on': date,
+      'deleted_on': null,
+    });
+    var userData = await investorCollection.doc(uid).get();
+    var currentUserData = userData.data();
+    currentUser.connects = currentUserData['connects_avail'];
+    investorCollection.doc(uid).update({
+      'connects_avail': currentUser.connects - 1,
+      'updated_on': date,
     });
   }
 }

@@ -96,28 +96,27 @@ class _ConnectionsState extends State<Connections> {
                       // height: MediaQuery.of(context).copyWith().size.height *
                       //         (100 / 100) -
                       //     169,
-                      child: SingleChildScrollView(
-                        child: Padding(
-                          padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
-                          child: (connections.length == 0)
-                              ? Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                  child: Text(
-                                    'No connections yet!',
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 18),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                )
-                              : ListView.builder(
-                                  itemCount: connections.length,
-                                  itemBuilder: (context, i) {
-                                    return ConnectionCard(index: i);
-                                  },
+                      // child: SingleChildScrollView(
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
+                        child: (connections.length == 0)
+                            ? Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                child: Text(
+                                  'No connections yet!',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 18),
+                                  textAlign: TextAlign.center,
                                 ),
-                        ),
+                              )
+                            : ListView.builder(
+                                itemCount: connections.length,
+                                itemBuilder: (context, i) {
+                                  return ConnectionCard(index: i);
+                                },
+                              ),
                       ),
+                      // ),
                     );
                   } else {
                     return Container(
