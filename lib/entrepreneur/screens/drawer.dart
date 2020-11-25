@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:razzom/accounts/screens/authentication/authentication.dart';
 import 'package:razzom/accounts/screens/authentication/signin.dart';
 import 'package:razzom/accounts/services/auth.dart';
-import 'package:razzom/investor/screens/bookmarks.dart';
-import 'package:razzom/investor/screens/connections.dart';
-import 'package:razzom/investor/screens/settings.dart';
+import 'package:razzom/entrepreneur/screens/videoPitch.dart';
+import 'package:razzom/entrepreneur/screens/connections.dart';
+import 'package:razzom/entrepreneur/screens/settings.dart';
 import 'package:razzom/razzom/shared/data/vars.dart';
 
 class CustomDrawer extends StatelessWidget {
@@ -41,17 +41,17 @@ class CustomDrawer extends StatelessWidget {
               color: Color(0xFF0C1A24),
               child: new ListTile(
                 leading: Icon(
-                  Icons.bookmark,
+                  Icons.videocam,
                   color: Colors.white,
                   size: 30,
                 ),
                 title: Text(
-                  'Bookmarks',
+                  'Video Pitch',
                   style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
                 onTap: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Bookmarks()));
+                      MaterialPageRoute(builder: (context) => VideoPitch()));
                 },
               ),
             ),

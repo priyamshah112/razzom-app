@@ -50,7 +50,8 @@ class AuthService {
         print("An error occured while trying to send email verification");
         print(e.message);
       }
-      return result.user;
+      // await signOut();
+      return null;
     } catch (e) {
       print(e.toString());
       return null;

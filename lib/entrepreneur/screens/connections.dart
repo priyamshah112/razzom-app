@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:razzom/investor/screens/connectionCard.dart';
-import 'package:razzom/investor/screens/drawer.dart';
-import 'package:razzom/investor/screens/home.dart';
-import 'package:razzom/investor/screens/idashboard.dart';
+import 'package:razzom/entrepreneur/screens/connectionCard.dart';
+import 'package:razzom/entrepreneur/screens/drawer.dart';
+import 'package:razzom/entrepreneur/screens/edashboard.dart';
 import 'package:razzom/razzom/shared/data/vars.dart';
 import 'package:razzom/razzom/shared/screens/loader.dart';
 import 'package:razzom/razzom/shared/services/database.dart';
@@ -42,19 +41,7 @@ class _ConnectionsState extends State<Connections> {
             ),
             onPressed: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => Idashboard()));
-            },
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.home,
-              color: Colors.white,
-              size: 40,
-            ),
-            onPressed: () {
-              searchResults = false;
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Home()));
+                  MaterialPageRoute(builder: (context) => Edashboard()));
             },
           ),
           SizedBox(
@@ -90,6 +77,7 @@ class _ConnectionsState extends State<Connections> {
                 future: DatabaseService(uid: uid).getConnections(),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (snapshot.hasData) {
+                    print("Back from data");
                     return Container(
                       color: Color(0xFF0C1A24),
                       width: MediaQuery.of(context).copyWith().size.width *
@@ -103,11 +91,22 @@ class _ConnectionsState extends State<Connections> {
                         child: (connections.length == 0)
                             ? Padding(
                                 padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                child: Text(
-                                  'No connections yet!',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 18),
-                                  textAlign: TextAlign.center,
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      'No connections yet!',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 18),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    SizedBox(height: 20),
+                                    // ConnectionCard(
+                                    //   index: 0,
+                                    // ),
+                                    // ConnectionCard(
+                                    //   index: 1,
+                                    // ),
+                                  ],
                                 ),
                               )
                             : ListView.builder(

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:razzom/investor/screens/drawer.dart';
-import 'package:razzom/investor/screens/home.dart';
-import 'package:razzom/investor/screens/idashboard.dart';
-import 'package:razzom/razzom/shared/data/vars.dart';
+import 'package:razzom/entrepreneur/screens/drawer.dart';
+import 'package:razzom/entrepreneur/screens/edashboard.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -34,21 +32,20 @@ class _SettingsState extends State<Settings> {
             ),
             onPressed: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => Idashboard()));
+                  MaterialPageRoute(builder: (context) => Edashboard()));
             },
           ),
-          IconButton(
-            icon: Icon(
-              Icons.home,
-              color: Colors.white,
-              size: 40,
-            ),
-            onPressed: () {
-              searchResults = false;
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Home()));
-            },
-          ),
+          // IconButton(
+          //   icon: Icon(
+          //     Icons.home,
+          //     color: Colors.white,
+          //     size: 40,
+          //   ),
+          //   onPressed: () {
+          //     Navigator.push(
+          //         context, MaterialPageRoute(builder: (context) => Home()));
+          //   },
+          // ),
           SizedBox(
             width: 10,
           ),

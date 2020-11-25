@@ -48,12 +48,12 @@ class ConnectionCard extends StatelessWidget {
                         Column(
                           children: [
                             Container(
-                              width: 100,
-                              height: 100,
+                              width: 80,
+                              height: 80,
                               decoration: new BoxDecoration(
                                 shape: BoxShape.circle,
                                 image: new DecorationImage(
-                                  fit: BoxFit.contain,
+                                  fit: BoxFit.fill,
                                   // image: AssetImage('assets/images/profile.png'),
                                   image: connection['profile_pic'] == null
                                       ? AssetImage('assets/images/profile.png')
@@ -97,7 +97,7 @@ class ConnectionCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
-                          height: 10,
+                          height: 15,
                         ),
                         // Container(
                         //   child: Text(
@@ -355,7 +355,8 @@ class ConnectionCard extends StatelessWidget {
                       ),
                       onPressed: () {
                         FlutterOpenWhatsapp.sendSingleMessage(
-                            "+917738478888".toString().substring(1), "Hello!");
+                            connection['whatsapp_no'].toString().substring(1),
+                            "Hello!");
                       },
                       // onPressed: () async => await launch(
                       //     "https://wa.me/+917977754834?text=Hello"),
