@@ -1,23 +1,20 @@
 // import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
-import 'dart:math';
+
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:razzom/investor/screens/idashboard.dart';
-// import 'package:image_cropper/image_cropper.dart';
-// import 'package:image_picker/image_picker.dart';
-import 'package:razzom/razzom/models/customUser.dart';
-import 'package:razzom/razzom/shared/data/lists.dart';
-import 'package:razzom/razzom/shared/data/vars.dart';
-import 'package:razzom/razzom/shared/screens/loader.dart';
-import 'package:razzom/accounts/services/auth.dart';
-import 'package:razzom/razzom/shared/screens/constants.dart';
 // import 'dart:io';
 import 'package:flutter/widgets.dart';
-import 'package:razzom/razzom/shared/services/database.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mime_type/mime_type.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:razzom/accounts/services/auth.dart';
+import 'package:razzom/investor/screens/idashboard.dart';
+import 'package:razzom/razzom/shared/data/lists.dart';
+import 'package:razzom/razzom/shared/data/vars.dart';
+import 'package:razzom/razzom/shared/screens/constants.dart';
+import 'package:razzom/razzom/shared/services/database.dart';
 
 class UpdateProfile extends StatefulWidget {
   @override
@@ -343,7 +340,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
     imageErrorText = "";
     final _storage = FirebaseStorage.instance;
     final _picker = ImagePicker();
-    PickedFile image;
+    File image;
 
     // Check permission
     await Permission.photos.request();
@@ -351,7 +348,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
 
     if (permissionStatus.isGranted) {
       // Select Image
-      image = await _picker.getImage(source: ImageSource.gallery);
+      image = await ImagePicker.pickImage(source: ImageSource.gallery);
 
       // var fileSize = await file.length();
       // print("file size: " + fileSize.toString());
