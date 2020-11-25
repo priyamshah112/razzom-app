@@ -44,6 +44,7 @@ class _IdashboardState extends State<Idashboard> {
               size: 40,
             ),
             onPressed: () {
+              searchResults = false;
               Navigator.push(
                   context, MaterialPageRoute(builder: (context) => Home()));
             },

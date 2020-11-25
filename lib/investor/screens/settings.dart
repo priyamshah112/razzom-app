@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:razzom/investor/screens/drawer.dart';
 import 'package:razzom/investor/screens/home.dart';
 import 'package:razzom/investor/screens/idashboard.dart';
+import 'package:razzom/razzom/shared/data/vars.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -43,6 +44,7 @@ class _SettingsState extends State<Settings> {
               size: 40,
             ),
             onPressed: () {
+              searchResults = false;
               Navigator.push(
                   context, MaterialPageRoute(builder: (context) => Home()));
             },
