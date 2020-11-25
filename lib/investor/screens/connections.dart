@@ -52,6 +52,7 @@ class _ConnectionsState extends State<Connections> {
               size: 40,
             ),
             onPressed: () {
+              searchResults = false;
               Navigator.push(
                   context, MaterialPageRoute(builder: (context) => Home()));
             },

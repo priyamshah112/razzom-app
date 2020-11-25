@@ -54,6 +54,7 @@ class _BookmarksState extends State<Bookmarks> {
               size: 40,
             ),
             onPressed: () {
+              searchResults = false;
               Navigator.push(
                   context, MaterialPageRoute(builder: (context) => Home()));
             },

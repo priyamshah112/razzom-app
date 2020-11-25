@@ -56,7 +56,7 @@ class _BookmarkCardState extends State<BookmarkCard> {
                           child: Column(
                             children: <Widget>[
                               Text(
-                                bookmark['video_title'],
+                                bookmark.videoTitle,
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 16),
                                 textAlign: TextAlign.center,
@@ -89,7 +89,7 @@ class _BookmarkCardState extends State<BookmarkCard> {
                         ),
                       ),
                       Visibility(
-                        visible: true, //TO DO
+                        visible: !bookmark.isConnected,
                         child: Expanded(
                           flex: 3,
                           child: Container(
@@ -293,9 +293,8 @@ class _BookmarkCardState extends State<BookmarkCard> {
   }
 
   connect() async {
-    print(bookmark['entrepreneur_id']);
-    await DatabaseService(uid: uid)
-        .createConnection(bookmark['entrepreneur_id']);
+    print(bookmark.entrepreneurId);
+    await DatabaseService(uid: uid).createConnection(bookmark.entrepreneurId);
     // dynamic result = await DatabaseService(uid: uid).getUserData();
   }
 

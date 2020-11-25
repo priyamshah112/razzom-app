@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:razzom/razzom/models/customBookmark.dart';
 import 'package:razzom/razzom/models/customUser.dart';
 import 'package:razzom/razzom/models/customVideo.dart';
 import 'package:razzom/razzom/shared/data/vars.dart';
@@ -165,7 +166,7 @@ class DatabaseService {
     }
   }
 
-  getConnections() async {
+  Future getConnections() async {
     connections.clear();
     if (currentUser.userType == "Entrepreneur") {
       var connectionsData = await connectionsCollection
@@ -202,7 +203,7 @@ class DatabaseService {
     }
   }
 
-  getPitchVideo() async {
+  Future getPitchVideo() async {
     if (currentUser.videoId != null) {
       pitchVideo = await videosCollection.doc(currentUser.videoId).get();
       print(pitchVideo.data().toString());
@@ -271,16 +272,40 @@ class DatabaseService {
     }
   }
 
-  getBookmarks() async {
+  Future getBookmarks() async {
     bookmarks.clear();
-    var bookmarksData =
-        await bookmarksCollection.where('investor_id', isEqualTo: uid).get();
+    var bookmarksData = await bookmarksCollection
+        .where('investor_id', isEqualTo: uid)
+        .where('is_deleted', isEqualTo: false)
+        .get();
     for (var i = 0; i < bookmarksData.size; i++) {
       var bookmark = bookmarksData.docs[i];
-      if (!bookmark['is_deleted']) {
-        bookmarks.add(bookmark);
-        print('bookmark added: ' + bookmark.data().toString());
+      bool isConnected = false;
+      // String connectionId = "";
+      var connection = await connectionsCollection
+          .where('investor_id', isEqualTo: uid)
+          .where('entrepreneur_id', isEqualTo: bookmark['entrepreneur_id'])
+          .where('is_deleted', isEqualTo: false)
+          .get();
+      if (connection.docs.length == 1) {
+        // print('connection: ' + connection.docs[0].data().toString());
+        isConnected = true;
+        // connectionId = connection.docs[0].id;
       }
+
+      CustomBookmark bm = new CustomBookmark(
+          bookmark.id,
+          bookmark['video_id'],
+          bookmark['video_title'],
+          bookmark['video_url'],
+          isConnected,
+          bookmark['entrepreneur_id']);
+      bookmarks.add(bm);
+
+      // if (!bookmark['is_deleted']) {
+      //   bookmarks.add(bookmark);
+      //   print('bookmark added: ' + bookmark.data().toString());
+      // }
       // print(bookmark.data());
       // print(connection);
     }
@@ -288,9 +313,11 @@ class DatabaseService {
     return 'Done';
   }
 
-  getVideos() async {
+  Future getVideos() async {
     print("reached get videos");
     videos.clear();
+    videosToDisplay.clear();
+    searchResults = false;
     var videosData = await videosCollection
         .where('approval_status', isEqualTo: "A")
         .where('is_deleted', isEqualTo: false)
@@ -354,6 +381,7 @@ class DatabaseService {
     currentUser.connects = currentUserData['connects_avail'];
     print("connects: " + currentUser.connects.toString());
     print(videos.length.toString());
+    videosToDisplay = videos;
     return 'Done';
   }
 

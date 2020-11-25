@@ -22,7 +22,7 @@ class _VideoCardState extends State<VideoCard> {
 
   @override
   Widget build(BuildContext context) {
-    video = videos[widget.index];
+    video = videosToDisplay[widget.index];
     print(video);
     return Padding(
       padding: EdgeInsets.all(0),
@@ -58,6 +58,9 @@ class _VideoCardState extends State<VideoCard> {
                             children: <Widget>[
                               Text(
                                 video.title,
+                                // video.fundingRequired.toString() +
+                                //     " " +
+                                //     video.industry,
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 16),
                                 textAlign: TextAlign.center,
