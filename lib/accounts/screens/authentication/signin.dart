@@ -323,6 +323,9 @@ class _SignInState extends State<SignIn> {
                                     dynamic result =
                                         await _auth.signInWithGoogle();
                                     print("RESULT: " + result.toString());
+                                    print("RESULT EMAIL: " +
+                                        result.profile['email']);
+
                                     if (result == null) {
                                       setState(() {
                                         signinError =

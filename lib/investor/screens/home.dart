@@ -1,5 +1,7 @@
 import 'package:flappy_search_bar/flappy_search_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:razzom/investor/screens/drawer.dart';
 import 'package:razzom/investor/screens/customVideoPlayer.dart';
 import 'package:razzom/investor/screens/idashboard.dart';
@@ -16,6 +18,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  Razorpay _razorpay;
+  var options;
+
   void initState() {
     super.initState();
     if (!searchResults) {
@@ -35,9 +40,58 @@ class _HomeState extends State<Home> {
         4: true,
       };
       searchText = "";
+      _razorpay = Razorpay();
+      _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+      _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+      _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
     }
+  }
 
-    // DatabaseService(uid: uid).getVideos();
+  @override
+  void dispose() {
+    super.dispose();
+    _razorpay.clear();
+  }
+
+  Future openCheckout(int amount) async {
+    print("reached open checkout");
+    options = {
+      'key': 'rzp_test_Fh06M1SVtFZrFl',
+      'amount': amount * 100,
+      "currency": "USD",
+      'name': 'Razzom',
+      'description': 'Connect Coins',
+      'prefill': {'contact': '8888888888', 'email': 'test@razorpay.com'},
+      'external': {
+        'wallets': ['paytm']
+      }
+    };
+
+    try {
+      print("reached open checkout try");
+      _razorpay.open(options);
+    } catch (e) {
+      debugPrint(e);
+    }
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    await DatabaseService(uid: uid).updateConnectCoins(response, options);
+    Fluttertoast.showToast(msg: "Payment successful", timeInSecForIosWeb: 6);
+    setState(() {
+      print("setting state");
+    });
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    Fluttertoast.showToast(
+        msg: "ERROR: " + response.code.toString() + " - " + response.message,
+        timeInSecForIosWeb: 6);
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    Fluttertoast.showToast(
+        msg: "EXTERNAL_WALLET: " + response.walletName, timeInSecForIosWeb: 6);
   }
 
   @override
@@ -336,8 +390,9 @@ class _HomeState extends State<Home> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        onPressed: () {
+                        onPressed: () async {
                           print("1 connect");
+                          await openCheckout(10);
                         },
                       ),
                     ),
@@ -367,8 +422,9 @@ class _HomeState extends State<Home> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        onPressed: () {
+                        onPressed: () async {
                           print("5 connect");
+                          await openCheckout(50);
                         },
                       ),
                     ),
@@ -398,8 +454,10 @@ class _HomeState extends State<Home> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        onPressed: () {
+                        onPressed: () async {
+                          Navigator.of(context).pop();
                           print("10 connect");
+                          await openCheckout(95);
                         },
                       ),
                     ),

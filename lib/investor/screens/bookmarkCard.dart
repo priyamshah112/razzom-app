@@ -64,7 +64,27 @@ class _BookmarkCardState extends State<BookmarkCard> {
                               Text(
                                 bookmark.videoTitle,
                                 style: TextStyle(
-                                    color: Colors.white, fontSize: 16),
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              Text(
+                                "Industry: " + bookmark.industry,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              Text(
+                                "Funding Required: " +
+                                    FUNDING_OPTIONS[bookmark.fundingRequired],
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                ),
                                 textAlign: TextAlign.center,
                               ),
                             ],

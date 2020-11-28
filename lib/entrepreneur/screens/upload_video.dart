@@ -37,6 +37,7 @@ class _UploadVideoState extends State<UploadVideo> {
 
   @override
   void initState() {
+    super.initState();
     // if (!fileUploaded && !fileUploading) {
     // print("videoID: " + currentUser.videoId);
     if (currentUser.videoId == null) {
@@ -48,7 +49,6 @@ class _UploadVideoState extends State<UploadVideo> {
       videoUrl = pitchVideo['url'];
     }
     // }
-    super.initState();
   }
 
   @override

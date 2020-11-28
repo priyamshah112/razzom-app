@@ -64,11 +64,28 @@ class _VideoCardState extends State<VideoCard> {
                             children: <Widget>[
                               Text(
                                 video.title,
-                                // video.fundingRequired.toString() +
-                                //     " " +
-                                //     video.industry,
                                 style: TextStyle(
-                                    color: Colors.white, fontSize: 16),
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              Text(
+                                "Industry: " + video.industry,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              Text(
+                                "Funding Required: " +
+                                    FUNDING_OPTIONS[video.fundingRequired],
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                ),
                                 textAlign: TextAlign.center,
                               ),
                             ],

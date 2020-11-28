@@ -287,9 +287,12 @@ class DatabaseService {
           .where('entrepreneur_id', isEqualTo: bookmark['entrepreneur_id'])
           .where('is_deleted', isEqualTo: false)
           .get();
+      var entrepreneur;
       if (connection.docs.length == 1) {
         // print('connection: ' + connection.docs[0].data().toString());
         isConnected = true;
+        entrepreneur =
+            await entrepreneurCollection.doc(bookmark['entrepreneur_id']).get();
         // connectionId = connection.docs[0].id;
       }
 
@@ -299,7 +302,9 @@ class DatabaseService {
           bookmark['video_title'],
           bookmark['video_url'],
           isConnected,
-          bookmark['entrepreneur_id']);
+          bookmark['entrepreneur_id'],
+          entrepreneur['funding_required'],
+          entrepreneur['industry']);
       bookmarks.add(bm);
 
       // if (!bookmark['is_deleted']) {
@@ -428,6 +433,25 @@ class DatabaseService {
     currentUser.connects = currentUserData['connects_avail'];
     investorCollection.doc(uid).update({
       'connects_avail': currentUser.connects - 1,
+      'updated_on': date,
+    });
+  }
+
+  updateConnectCoins(var response, var options) async {
+    print("reached update connect coins");
+    print('amount' + options['amount'].toString());
+    int amount = options['amount'];
+    int connects = 0;
+    if (amount == 1000) {
+      connects = 1;
+    } else if (amount == 5000) {
+      connects = 5;
+    } else if (amount == 9500) {
+      connects = 10;
+    }
+    var date = new DateTime.now();
+    await investorCollection.doc(uid).update({
+      'connects_avail': currentUser.connects + connects,
       'updated_on': date,
     });
   }
