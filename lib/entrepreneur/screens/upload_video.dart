@@ -1,24 +1,23 @@
 // import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
-import 'dart:math';
+
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+// import 'dart:io';
+import 'package:flutter/widgets.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:mime/mime.dart';
+import 'package:mime_type/mime_type.dart';
+import 'package:path/path.dart' as path;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:razzom/entrepreneur/screens/edashboard.dart';
 import 'package:razzom/entrepreneur/screens/videoPitch.dart';
 // import 'package:image_cropper/image_cropper.dart';
 // import 'package:image_picker/image_picker.dart';
 import 'package:razzom/razzom/shared/data/vars.dart';
-import 'package:razzom/razzom/shared/screens/loader.dart';
-import 'package:razzom/accounts/services/auth.dart';
 import 'package:razzom/razzom/shared/screens/constants.dart';
-// import 'dart:io';
-import 'package:flutter/widgets.dart';
+import 'package:razzom/razzom/shared/screens/loader.dart';
 import 'package:razzom/razzom/shared/services/database.dart';
-import 'package:mime_type/mime_type.dart';
-import 'package:path/path.dart' as path;
 
 class UploadVideo extends StatefulWidget {
   @override
@@ -514,7 +513,7 @@ class _UploadVideoState extends State<UploadVideo> {
     });
     final _storage = FirebaseStorage.instance;
     final _picker = ImagePicker();
-    PickedFile video;
+    File video;
 
     // Check permission
     await Permission.photos.request();
@@ -522,7 +521,7 @@ class _UploadVideoState extends State<UploadVideo> {
 
     if (permissionStatus.isGranted) {
       // Select Image
-      video = await _picker.getVideo(source: ImageSource.gallery);
+      video = await ImagePicker.pickVideo(source: ImageSource.gallery);
 
       // var fileSize = await file.length();
       // print("file size: " + fileSize.toString());
@@ -530,7 +529,7 @@ class _UploadVideoState extends State<UploadVideo> {
 
       if (video != null) {
         var file = File(video.path);
-        print("mime: " + mime(file.path));
+        print("mime: " + mime(video.path));
         // print("mime: " + (lookupMimeType(video.path)));
         // print("extension: " + p.extension);
         print(path.basename(video.path));
