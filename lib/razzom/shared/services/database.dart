@@ -306,10 +306,10 @@ class DatabaseService {
       //   bookmarks.add(bookmark);
       //   print('bookmark added: ' + bookmark.data().toString());
       // }
-      // print(bookmark.data());
+      // print(bookmark.data()['id']);
       // print(connection);
     }
-    print(bookmarks);
+    // print(bookmarks);
     return 'Done';
   }
 

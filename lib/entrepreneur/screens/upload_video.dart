@@ -5,7 +5,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 // import 'dart:io';
 import 'package:flutter/widgets.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime_type/mime_type.dart';
 import 'package:path/path.dart' as path;
@@ -37,6 +36,22 @@ class _UploadVideoState extends State<UploadVideo> {
   String videoUrl = "";
 
   @override
+  void initState() {
+    // if (!fileUploaded && !fileUploading) {
+    // print("videoID: " + currentUser.videoId);
+    if (currentUser.videoId == null) {
+      title = "";
+      videoUrl = "";
+    } else {
+      // title = "Title";
+      title = pitchVideo['title'];
+      videoUrl = pitchVideo['url'];
+    }
+    // }
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // if (loading) {
     //   return Loader();
@@ -59,20 +74,6 @@ class _UploadVideoState extends State<UploadVideo> {
           future: DatabaseService(uid: uid).getPitchVideo(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
-              if (!fileUploaded && !fileUploading) {
-                // ISSUE IN VIDEO UPLOAD AFTER TITLE CHANGE
-                // print("videoID: " + currentUser.videoId);
-                if (currentUser.videoId == null) {
-                  title = "";
-                  videoUrl = "";
-                } else {
-                  // title = "Title";
-                  if (!fileUploaded && !fileUploading) {
-                    title = pitchVideo['title'];
-                    videoUrl = pitchVideo['url'];
-                  }
-                }
-              }
               return Container(
                 color: Color(0xFF162F42),
                 height: MediaQuery.of(context).copyWith().size.height,
@@ -537,11 +538,15 @@ class _UploadVideoState extends State<UploadVideo> {
         // print(mime(video.path).toString().compareTo("image/jpeg"));
 
         // .mp4,.mov,.wmv,.flv,.avi,.webm,.mkv
-        if (mimeType.compareTo("image/jpeg") == 0
-            // ||
-            //     mimeType.compareTo("image/jpg") == 0 ||
-            //     mimeType.compareTo("video/wmv") == 0
-            ) {
+        // if (true) {
+        if (mimeType.compareTo("video/mp4") == 0) {
+          //  ||
+          //     mimeType.compareTo("video/x-matroska") == 0 ||
+          //     mimeType.compareTo("video/x-flv") == 0 ||
+          //     mimeType.compareTo("video/x-msvideo") == 0 ||
+          //     mimeType.compareTo("video/quicktime") == 0 ||
+          //     mimeType.compareTo("video/webm") == 0 ||
+          //     mimeType.compareTo("video/x-ms-wmv") == 0) {
           // if (true) {
           var enc = await file.readAsBytes();
           print("LENGTH: " + enc.length.toString());
@@ -581,7 +586,7 @@ class _UploadVideoState extends State<UploadVideo> {
           // print(mime(video.path).toString().compareTo("image/jpeg"));
           setState(() {
             videoError = true;
-            videoErrorText = "Invalid file type";
+            videoErrorText = "Invalid file type. Please upload mp4 file.";
           });
         }
       } else {

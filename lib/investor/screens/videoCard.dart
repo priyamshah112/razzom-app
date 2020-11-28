@@ -42,9 +42,15 @@ class _VideoCardState extends State<VideoCard> {
                 Container(
                   width: MediaQuery.of(context).copyWith().size.width,
                   height: 150,
-                  child: Text(
-                    'Cannot load video!',
-                    style: TextStyle(color: Colors.white),
+                  child: Center(
+                    child: Text(
+                      'Cannot load video!',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                      // textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
                 Container(
