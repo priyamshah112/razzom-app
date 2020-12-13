@@ -135,7 +135,10 @@ class _VideoPitchState extends State<VideoPitch> {
                                           0.7,
                                       child: Text(
                                         // 'Video Title jhbhbjh bjbh jh bjhb jhb jhb ',
-                                        pitchVideo['title'],
+                                        (pitchVideo['title'] == null ||
+                                                pitchVideo['title'] == "")
+                                            ? "Video Title"
+                                            : pitchVideo['title'],
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 22,
@@ -160,54 +163,54 @@ class _VideoPitchState extends State<VideoPitch> {
                                   //     color: Colors.white,
                                   //   ),
                                   // ),
-                                  // (pitchVideo['url'] != "" &&
-                                  //         pitchVideo['url'] != null)
-                                  //     ? CustomVideoPlayer(
-                                  //         videoPlayerController:
-                                  //             VideoPlayerController.network(
-                                  //                 pitchVideo['url']),
-                                  //         looping: true,
-                                  //       )
-                                  //     : Center(
-                                  //         child: Container(
-                                  //           color: Colors.grey,
-                                  //           width: MediaQuery.of(context)
-                                  //                   .copyWith()
-                                  //                   .size
-                                  //                   .width *
-                                  //               0.8,
-                                  //           height: 200,
-                                  //           child: Center(
-                                  //             child: Text(
-                                  //               'Cannot load video!',
-                                  //               style: TextStyle(
-                                  //                 color: Colors.black,
-                                  //                 fontSize: 18,
-                                  //               ),
-                                  //             ),
-                                  //           ),
-                                  //         ),
-                                  //       ),
-                                  // Center(
-                                  //   child: Container(
-                                  //     color: Colors.grey,
-                                  //     width: MediaQuery.of(context)
-                                  //             .copyWith()
-                                  //             .size
-                                  //             .width *
-                                  //         0.8,
-                                  //     height: 200,
-                                  //     child: Center(
-                                  //       child: Text(
-                                  //         'Cannot load video!',
-                                  //         style: TextStyle(
-                                  //           color: Colors.black,
-                                  //           fontSize: 18,
-                                  //         ),
-                                  //       ),
-                                  //     ),
-                                  //   ),
-                                  // ),
+                                  (pitchVideo['url'] != "" &&
+                                          pitchVideo['url'] != null)
+                                      ? CustomVideoPlayer(
+                                          videoPlayerController:
+                                              VideoPlayerController.network(
+                                                  pitchVideo['url']),
+                                          looping: true,
+                                        )
+                                      : Center(
+                                          child: Container(
+                                            color: Colors.grey,
+                                            width: MediaQuery.of(context)
+                                                    .copyWith()
+                                                    .size
+                                                    .width *
+                                                0.8,
+                                            height: 200,
+                                            child: Center(
+                                              child: Text(
+                                                'Cannot load video!',
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: 18,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                  Center(
+                                    child: Container(
+                                      color: Colors.grey,
+                                      width: MediaQuery.of(context)
+                                              .copyWith()
+                                              .size
+                                              .width *
+                                          0.8,
+                                      height: 200,
+                                      child: Center(
+                                        child: Text(
+                                          'Cannot load video!',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
                               Visibility(

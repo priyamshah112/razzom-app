@@ -32,38 +32,39 @@ class _VideoCardState extends State<VideoCard> {
             color: Color(0xFF162F42),
             child: Column(
               children: <Widget>[
-                // (video.url != "" && video.url != null)
-                //     ? CustomVideoPlayer(
-                //         videoPlayerController:
-                //             VideoPlayerController.network(video.url),
-                //         looping: true,
-                //       )
-                // :
-                Container(
-                  width: MediaQuery.of(context).copyWith().size.width,
-                  height: 150,
-                  child: Center(
-                    child: Text(
-                      'Cannot load video!',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
+                (video.url != "" && video.url != null)
+                    ? CustomVideoPlayer(
+                        videoPlayerController:
+                            VideoPlayerController.network(video.url),
+                        looping: true,
+                      )
+                    : Container(
+                        width: MediaQuery.of(context).copyWith().size.width,
+                        height: 150,
+                        child: Center(
+                          child: Text(
+                            'Cannot load video!',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
+                            // textAlign: TextAlign.center,
+                          ),
+                        ),
                       ),
-                      // textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
                 Container(
                   padding: EdgeInsets.all(5),
                   child: Row(
                     children: [
                       Expanded(
-                        flex: 5,
+                        flex: 50,
                         child: Container(
                           child: Column(
                             children: <Widget>[
                               Text(
-                                video.title,
+                                video.title == null
+                                    ? "Video title"
+                                    : video.title,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
@@ -72,7 +73,9 @@ class _VideoCardState extends State<VideoCard> {
                                 textAlign: TextAlign.center,
                               ),
                               Text(
-                                "Industry: " + video.industry,
+                                video.industry == null
+                                    ? "Industry"
+                                    : video.industry,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 14,
@@ -80,8 +83,9 @@ class _VideoCardState extends State<VideoCard> {
                                 textAlign: TextAlign.center,
                               ),
                               Text(
-                                "Funding Required: " +
-                                    FUNDING_OPTIONS[video.fundingRequired],
+                                video.fundingRequired == null
+                                    ? "Funding Required"
+                                    : FUNDING_OPTIONS[video.fundingRequired],
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 14,
@@ -93,7 +97,7 @@ class _VideoCardState extends State<VideoCard> {
                         ),
                       ),
                       Expanded(
-                        flex: 2,
+                        flex: 15,
                         child: Container(
                           child: Column(
                             children: <Widget>[
@@ -138,7 +142,7 @@ class _VideoCardState extends State<VideoCard> {
                       Visibility(
                         visible: !video.isConnected,
                         child: Expanded(
-                          flex: 3,
+                          flex: 35,
                           child: Container(
                             child: Column(
                               children: <Widget>[

@@ -126,7 +126,9 @@ class _IdashboardState extends State<Idashboard> {
                                   MediaQuery.of(context).copyWith().size.width *
                                       (85 / 100),
                               child: Text(
-                                currentUser.name,
+                                currentUser.name == null
+                                    ? "Name"
+                                    : currentUser.name,
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 25),
                                 textAlign: TextAlign.center,
@@ -146,7 +148,9 @@ class _IdashboardState extends State<Idashboard> {
                                   MediaQuery.of(context).copyWith().size.width *
                                       (85 / 100),
                               child: Text(
-                                currentUser.phone,
+                                currentUser.phone == null
+                                    ? "Phone Number"
+                                    : currentUser.phone,
                                 style: TextStyle(fontSize: 20),
                                 textAlign: TextAlign.center,
                                 softWrap: true,
@@ -165,7 +169,9 @@ class _IdashboardState extends State<Idashboard> {
                                   MediaQuery.of(context).copyWith().size.width *
                                       (85 / 100),
                               child: Text(
-                                currentUser.email,
+                                currentUser.email == null
+                                    ? "Email"
+                                    : currentUser.email,
                                 style: TextStyle(fontSize: 20),
                                 textAlign: TextAlign.center,
                                 softWrap: true,
@@ -184,9 +190,15 @@ class _IdashboardState extends State<Idashboard> {
                                   MediaQuery.of(context).copyWith().size.width *
                                       (85 / 100),
                               child: Text(
-                                currentUser.location['city'] +
-                                    ', ' +
-                                    currentUser.location['country'],
+                                (currentUser.location['city'] == null ||
+                                        currentUser.location['city'] == "" ||
+                                        currentUser.location['country'] ==
+                                            null ||
+                                        currentUser.location['country'] == "")
+                                    ? "City, Country"
+                                    : currentUser.location['city'] +
+                                        ', ' +
+                                        currentUser.location['country'],
                                 style: TextStyle(fontSize: 20),
                                 textAlign: TextAlign.center,
                                 softWrap: true,
@@ -206,8 +218,10 @@ class _IdashboardState extends State<Idashboard> {
                                       (85 / 100),
                               child: Text(
                                 // 'Funding Budget: ',
-                                'Funding Budget: ' +
-                                    FUNDING_OPTIONS[currentUser.funding],
+                                currentUser.funding == null
+                                    ? 'Funding Required: NA'
+                                    : 'Funding Required: ' +
+                                        FUNDING_OPTIONS[currentUser.funding],
                                 style: TextStyle(fontSize: 20),
                                 textAlign: TextAlign.center,
                                 softWrap: true,
@@ -227,7 +241,8 @@ class _IdashboardState extends State<Idashboard> {
                             padding: const EdgeInsets.all(15),
                             color: Color(0xFF0C1A24),
                             child: Text(
-                              currentUser.description == ""
+                              (currentUser.description == null ||
+                                      currentUser.description == "")
                                   ? 'Write a short introduction.'
                                   : currentUser.description,
                               style:

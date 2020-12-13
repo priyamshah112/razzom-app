@@ -172,14 +172,14 @@ class _EdashboardState extends State<Edashboard> {
                                       shape: BoxShape.circle,
                                       image: new DecorationImage(
                                         fit: BoxFit.fill,
-                                        image: AssetImage(
-                                            'assets/images/profile.png'),
-                                        // image: (currentUser.profilePicUrl !=
-                                        //         null)
-                                        //     ? NetworkImage(
-                                        //         currentUser.profilePicUrl)
-                                        //     : AssetImage(
-                                        //         'assets/images/profile.png'),
+                                        // image: AssetImage(
+                                        //     'assets/images/profile.png'),
+                                        image: (currentUser.profilePicUrl !=
+                                                null)
+                                            ? NetworkImage(
+                                                currentUser.profilePicUrl)
+                                            : AssetImage(
+                                                'assets/images/profile.png'),
                                       ),
                                     ),
                                   ),
@@ -219,7 +219,9 @@ class _EdashboardState extends State<Edashboard> {
                                         .width *
                                     (85 / 100),
                                 child: Text(
-                                  currentUser.name,
+                                  currentUser.name == null
+                                      ? "Name"
+                                      : currentUser.name,
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 25),
@@ -242,7 +244,9 @@ class _EdashboardState extends State<Edashboard> {
                                         .width *
                                     (85 / 100),
                                 child: Text(
-                                  currentUser.phone,
+                                  currentUser.phone == null
+                                      ? "Phone Number"
+                                      : currentUser.phone,
                                   style: TextStyle(fontSize: 20),
                                   textAlign: TextAlign.center,
                                   softWrap: true,
@@ -263,7 +267,9 @@ class _EdashboardState extends State<Edashboard> {
                                         .width *
                                     (85 / 100),
                                 child: Text(
-                                  currentUser.email,
+                                  currentUser.email == null
+                                      ? "Email"
+                                      : currentUser.email,
                                   style: TextStyle(fontSize: 20),
                                   textAlign: TextAlign.center,
                                   softWrap: true,
@@ -284,9 +290,15 @@ class _EdashboardState extends State<Edashboard> {
                                         .width *
                                     (85 / 100),
                                 child: Text(
-                                  currentUser.location['city'] +
-                                      ', ' +
-                                      currentUser.location['country'],
+                                  (currentUser.location['city'] == null ||
+                                          currentUser.location['city'] == "" ||
+                                          currentUser.location['country'] ==
+                                              null ||
+                                          currentUser.location['country'] == "")
+                                      ? "City, Country"
+                                      : currentUser.location['city'] +
+                                          ', ' +
+                                          currentUser.location['country'],
                                   style: TextStyle(fontSize: 20),
                                   textAlign: TextAlign.center,
                                   softWrap: true,
@@ -308,8 +320,10 @@ class _EdashboardState extends State<Edashboard> {
                                     (85 / 100),
                                 child: Text(
                                   // 'Funding Budget: ',
-                                  'Funding Required: ' +
-                                      FUNDING_OPTIONS[currentUser.funding],
+                                  currentUser.funding == null
+                                      ? 'Funding Required: NA'
+                                      : 'Funding Required: ' +
+                                          FUNDING_OPTIONS[currentUser.funding],
                                   style: TextStyle(fontSize: 20),
                                   textAlign: TextAlign.center,
                                   softWrap: true,

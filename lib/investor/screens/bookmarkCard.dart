@@ -1,5 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:razzom/investor/screens/bookmarks.dart';
 import 'package:razzom/investor/screens/customVideoPlayer.dart';
 import 'package:razzom/razzom/shared/data/lists.dart';
@@ -18,6 +20,63 @@ class BookmarkCard extends StatefulWidget {
 
 class _BookmarkCardState extends State<BookmarkCard> {
   var bookmark;
+  Razorpay _razorpay;
+  var options;
+
+  void initState() {
+    super.initState();
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _razorpay.clear();
+  }
+
+  Future openCheckout(int amount) async {
+    print("reached open checkout");
+    options = {
+      'key': 'rzp_test_Fh06M1SVtFZrFl',
+      'amount': amount * 100,
+      "currency": "USD",
+      'name': 'Razzom',
+      'description': 'Connect Coins',
+      'prefill': {'contact': '8888888888', 'email': 'test@razorpay.com'},
+      'external': {
+        'wallets': ['paytm']
+      }
+    };
+
+    try {
+      print("reached open checkout try");
+      _razorpay.open(options);
+    } catch (e) {
+      debugPrint(e);
+    }
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    await DatabaseService(uid: uid).updateConnectCoins(response, options);
+    Fluttertoast.showToast(msg: "Payment successful", timeInSecForIosWeb: 6);
+    setState(() {
+      print("setting state");
+    });
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    Fluttertoast.showToast(
+        msg: "ERROR: " + response.code.toString() + " - " + response.message,
+        timeInSecForIosWeb: 6);
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    Fluttertoast.showToast(
+        msg: "EXTERNAL_WALLET: " + response.walletName, timeInSecForIosWeb: 6);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,38 +90,40 @@ class _BookmarkCardState extends State<BookmarkCard> {
             color: Color(0xFF162F42),
             child: Column(
               children: <Widget>[
-                // (bookmark['video_url'] != "" && bookmark['video_url'] != null)
-                // ? CustomVideoPlayer(
-                //     videoPlayerController: VideoPlayerController.network(
-                //         bookmark['video_url']),
-                //     looping: true,
-                //   )
-                // :
-                Container(
-                  width: MediaQuery.of(context).copyWith().size.width,
-                  height: 150,
-                  child: Center(
-                    child: Text(
-                      'Cannot load video!',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
+                (bookmark.videoUrl != "" && bookmark.videoUrl != null)
+                    ? CustomVideoPlayer(
+                        videoPlayerController: VideoPlayerController.network(
+                          bookmark.videoUrl,
+                        ),
+                        looping: true,
+                      )
+                    : Container(
+                        width: MediaQuery.of(context).copyWith().size.width,
+                        height: 150,
+                        child: Center(
+                          child: Text(
+                            'Cannot load video!',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                            ),
+                            // textAlign: TextAlign.center,
+                          ),
+                        ),
                       ),
-                      // textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
                 Container(
                   padding: EdgeInsets.all(5),
                   child: Row(
                     children: [
                       Expanded(
-                        flex: 5,
+                        flex: 50,
                         child: Container(
                           child: Column(
                             children: <Widget>[
                               Text(
-                                bookmark.videoTitle,
+                                bookmark.videoTitle == null
+                                    ? "Video title"
+                                    : bookmark.videoTitle,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
@@ -71,7 +132,9 @@ class _BookmarkCardState extends State<BookmarkCard> {
                                 textAlign: TextAlign.center,
                               ),
                               Text(
-                                "Industry: " + bookmark.industry,
+                                bookmark.industry == null
+                                    ? "Industry"
+                                    : bookmark.industry,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 14,
@@ -79,8 +142,9 @@ class _BookmarkCardState extends State<BookmarkCard> {
                                 textAlign: TextAlign.center,
                               ),
                               Text(
-                                "Funding Required: " +
-                                    FUNDING_OPTIONS[bookmark.fundingRequired],
+                                bookmark.fundingRequired == null
+                                    ? "Funding Required"
+                                    : FUNDING_OPTIONS[bookmark.fundingRequired],
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 14,
@@ -92,7 +156,7 @@ class _BookmarkCardState extends State<BookmarkCard> {
                         ),
                       ),
                       Expanded(
-                        flex: 2,
+                        flex: 15,
                         child: Container(
                           child: Column(
                             children: <Widget>[
@@ -117,7 +181,7 @@ class _BookmarkCardState extends State<BookmarkCard> {
                       Visibility(
                         visible: !bookmark.isConnected,
                         child: Expanded(
-                          flex: 3,
+                          flex: 35,
                           child: Container(
                             child: Column(
                               children: <Widget>[
@@ -375,8 +439,9 @@ class _BookmarkCardState extends State<BookmarkCard> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        onPressed: () {
+                        onPressed: () async {
                           print("1 connect");
+                          await openCheckout(10);
                         },
                       ),
                     ),
@@ -406,8 +471,9 @@ class _BookmarkCardState extends State<BookmarkCard> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        onPressed: () {
+                        onPressed: () async {
                           print("5 connect");
+                          await openCheckout(50);
                         },
                       ),
                     ),
@@ -437,8 +503,10 @@ class _BookmarkCardState extends State<BookmarkCard> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        onPressed: () {
+                        onPressed: () async {
+                          Navigator.of(context).pop();
                           print("10 connect");
+                          await openCheckout(95);
                         },
                       ),
                     ),
