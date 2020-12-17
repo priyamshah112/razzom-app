@@ -6,6 +6,7 @@ import 'package:razzom/investor/screens/home.dart';
 import 'package:razzom/investor/screens/idashboard.dart';
 import 'package:razzom/razzom/shared/data/vars.dart';
 import 'package:razzom/razzom/shared/screens/loader.dart';
+import 'package:razzom/razzom/shared/services/check_internet.dart';
 import 'package:razzom/razzom/shared/services/database.dart';
 import 'package:video_player/video_player.dart';
 
@@ -17,7 +18,14 @@ class Bookmarks extends StatefulWidget {
 class _BookmarksState extends State<Bookmarks> {
   void initState() {
     super.initState();
+    checkInternet().checkConnection(context);
     // DatabaseService(uid: uid).getBookmarks();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    checkInternet().listener.cancel();
   }
 
   @override

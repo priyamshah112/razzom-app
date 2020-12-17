@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:razzom/razzom/models/customUser.dart';
@@ -16,20 +17,27 @@ class AuthService {
 
   // sign in with email and password
   Future signInWithEmailAndPassword(String email, String password) async {
-    try {
-      UserCredential result = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
-      loading = false;
-      print("user data received");
-      if (result.user.emailVerified) {
-        print("Email verified");
-        uid = result.user.uid;
-        return result.user;
-      } else {
-        return null;
+    bool userExistsInDb = await checkUserInDb(email);
+    if (userExistsInDb) {
+      try {
+        UserCredential result = await _auth.signInWithEmailAndPassword(
+            email: email, password: password);
+        loading = false;
+        print("user data received");
+        if (result.user.emailVerified) {
+          print("Email verified");
+          uid = result.user.uid;
+          currentUser.email = email;
+          await DatabaseService(uid: uid).updateLastLogin();
+          return result.user;
+        } else {
+          return null;
+        }
+      } on FirebaseAuthException catch (e) {
+        print('Failed with error code: ${e.code}');
+        print(e.message);
       }
-    } catch (e) {
-      print(e.toString());
+    } else {
       return null;
     }
   }
@@ -52,9 +60,9 @@ class AuthService {
       }
       // await signOut();
       return null;
-    } catch (e) {
-      print(e.toString());
-      return null;
+    } on FirebaseAuthException catch (e) {
+      print('Failed with error code: ${e.code}');
+      print(e.message);
     }
   }
 
@@ -79,33 +87,84 @@ class AuthService {
   Future<UserCredential> signInWithGoogle() async {
     // Trigger the authentication flow
     final GoogleSignInAccount googleUser = await GoogleSignIn().signIn();
+    print("google user data " + googleUser.email);
 
-    // Obtain the auth details from the request
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
+    bool userExistsInDb = await checkUserInDb(googleUser.email);
 
-    print(googleAuth.toString());
+    if (userExistsInDb) {
+      // Obtain the auth details from the request
+      try {
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
 
-    // Create a new credential
-    final GoogleAuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
+        print(googleAuth.toString());
 
-    // print(credential.toString());
+        // Create a new credential
+        final GoogleAuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
 
-    // Once signed in, return the UserCredential
-    return await FirebaseAuth.instance.signInWithCredential(credential);
+        // print(credential.toString());
+        var userCredential;
+        // Once signed in, return the UserCredential
+        try {
+         userCredential =
+              await FirebaseAuth.instance.signInWithCredential(credential);
+          print(userCredential.toString());
+          // print("email: " + userCredential.user.email);
+        } on FirebaseAuthException catch (e) {
+          print('Failed with error code: ${e.code}');
+          print(e.message);
+        }
+        if (userCredential.user.emailVerified) {
+          print("Email verified");
+          uid = userCredential.user.uid;
+          currentUser.email = googleUser.email;
+          googleSignIn = true;
+          await DatabaseService(uid: uid).updateLastLogin();
+          return userCredential;
+        } else {
+          GoogleSignIn().signOut();
+          return null;
+        }
+      } on FirebaseAuthException catch (e) {
+        print('Failed with error code: ${e.code}');
+        print(e.message);
+      }
+    } else {
+      return null;
+    }
   }
 
   // logout
   Future signOut() async {
     try {
       print("reached sign out");
-      return await _auth.signOut();
+      if (googleSignIn) {
+        googleSignIn = false;
+        return await GoogleSignIn().signOut();
+      } else {
+        return await _auth.signOut();
+      }
     } catch (e) {
       print(e.toString());
       return null;
+    }
+  }
+
+  Future checkUserInDb(String email) async {
+    final CollectionReference userCollection =
+        FirebaseFirestore.instance.collection('users');
+
+    var user = await userCollection
+        .where('email', isEqualTo: email)
+        .where('is_deleted', isEqualTo: false)
+        .get();
+    if (user.docs.length == 0) {
+      return false;
+    } else {
+      return true;
     }
   }
 }

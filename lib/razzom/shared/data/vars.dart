@@ -11,6 +11,10 @@ bool fromRegister = false;
 bool fromForgotPassword = false;
 bool fromEdashboard = false;
 bool searchResults = false;
+bool googleSignIn = false;
+bool signedOut = false;
+String paymentDocId = "";
+bool internetAvailable = true;
 
 List connections = new List();
 List bookmarks = new List();
@@ -36,3 +40,6 @@ Map<int, bool> industryCheckboxes = {
 };
 
 String searchText = "";
+
+String RAZORPAY_KEY = "rzp_test_Fh06M1SVtFZrFl";
+String RAZORPAY_SECRET = "lfAQs5vBHVHEFMV2NGcCT8tq";

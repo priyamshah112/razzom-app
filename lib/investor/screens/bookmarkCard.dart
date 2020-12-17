@@ -45,7 +45,7 @@ class _BookmarkCardState extends State<BookmarkCard> {
       "currency": "USD",
       'name': 'Razzom',
       'description': 'Connect Coins',
-      'prefill': {'contact': '8888888888', 'email': 'test@razorpay.com'},
+      'prefill': {'contact': currentUser.phone, 'email': currentUser.email},
       'external': {
         'wallets': ['paytm']
       }

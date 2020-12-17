@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:razzom/accounts/services/auth.dart';
 import 'package:razzom/razzom/models/customBookmark.dart';
 import 'package:razzom/razzom/models/customUser.dart';
 import 'package:razzom/razzom/models/customVideo.dart';
@@ -7,6 +10,7 @@ import 'package:razzom/razzom/shared/data/vars.dart';
 class DatabaseService {
   final String uid;
   DatabaseService({this.uid});
+  final AuthService _auth = AuthService();
 
   final CollectionReference userCollection =
       FirebaseFirestore.instance.collection('users');
@@ -20,6 +24,8 @@ class DatabaseService {
       FirebaseFirestore.instance.collection('investor_video_bookmark');
   final CollectionReference videosCollection =
       FirebaseFirestore.instance.collection('videos');
+  final CollectionReference paymentCollection =
+      FirebaseFirestore.instance.collection('payment');
 
   Future createUserData(CustomUser user) async {
     print("reached db start");
@@ -79,6 +85,13 @@ class DatabaseService {
     }
   }
 
+  Future updateLastLogin() async {
+    var date = new DateTime.now();
+    await userCollection.doc(uid).update({
+      'last_login': date,
+    });
+  }
+
   Future updateUserData(String phone, String whatsapp, int funding,
       String profilePicUrl, String description) async {
     print("reached db update");
@@ -129,6 +142,9 @@ class DatabaseService {
 
   Future getUserData() async {
     print('get user data called');
+    bool userExistsInDb = await checkUserInDb(currentUser.email);
+
+    // if (userExistsInDb) {
     if (currentUser.userType == "Entrepreneur") {
       print("Entrepreneur DB");
       var userData = await entrepreneurCollection.doc(uid).get();
@@ -164,6 +180,16 @@ class DatabaseService {
       print(currentUser.profilePicUrl);
       return 'Done';
     }
+    // } else {
+    //   await _auth.signOut().then((res) {
+    //     showSignIn = true;
+    //     // signedOut = true;
+    //     // Navigator.of(context).pushAndRemoveUntil(
+    //     //     MaterialPageRoute(builder: (context) => Authentication()),
+    //     //     (Route<dynamic> route) => false);
+    //   });
+    //   return "User Blocked";
+    // }
   }
 
   Future getConnections() async {
@@ -454,5 +480,54 @@ class DatabaseService {
       'connects_avail': currentUser.connects + connects,
       'updated_on': date,
     });
+  }
+
+  Future checkUserInDb(String email) async {
+    final CollectionReference userCollection =
+        FirebaseFirestore.instance.collection('users');
+
+    var user = await userCollection
+        .where('email', isEqualTo: email)
+        .where('is_deleted', isEqualTo: false)
+        .get();
+    if (user.docs.length == 0) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  Future createPaymentDoc(var order) async {
+    var date = new DateTime.now();
+    DocumentReference docRef = await paymentCollection.add({
+      'created_on': date,
+      'investor_id': uid,
+      'pay_initial_info': {
+        'amount': json.decode(order)['amount'],
+        'amount_due': json.decode(order)['amount_due'],
+        'amount_paid': json.decode(order)['amount_paid'],
+        'attempts': json.decode(order)['attempts'],
+        'created_at': json.decode(order)['created_at'],
+        'currency': json.decode(order)['currency'],
+        'entity': json.decode(order)['entity'],
+        'id': json.decode(order)['id'],
+        'notes': json.decode(order)['notes'],
+        'offer_id': json.decode(order)['offer_id'],
+        'receipt': json.decode(order)['receipt'],
+        'status': json.decode(order)['status'],
+      },
+    });
+    print(docRef.id);
+    paymentDocId = docRef.id;
+  }
+
+  Future updatePaymentDoc(var options) async {
+    paymentCollection.doc(paymentDocId).set({
+      'pay_initial_info': {
+        'amount_due': 0,
+        'amount_paid': options['amount'],
+        'status': "paid",
+      },
+    }, SetOptions(merge: true));
   }
 }

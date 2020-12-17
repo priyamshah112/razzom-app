@@ -252,10 +252,12 @@ class _SignInState extends State<SignIn> {
                                   //     (Route<dynamic> route) => false);
                                 } catch (e) {
                                   print(e);
-                                  setState(() {
-                                    signinError = e.toString();
-                                    loading = false;
-                                  });
+                                  if (this.mounted) {
+                                    setState(() {
+                                      signinError = e.toString();
+                                      loading = false;
+                                    });
+                                  }
                                 }
                               }
                             },
@@ -323,15 +325,27 @@ class _SignInState extends State<SignIn> {
                                     dynamic result =
                                         await _auth.signInWithGoogle();
                                     print("RESULT: " + result.toString());
-                                    print("RESULT EMAIL: " +
-                                        result.profile['email']);
+
+                                    // print("RESULT EMAIL: " +
+                                    //     result.profile['email']);
 
                                     if (result == null) {
+                                      if (this.mounted) {
+                                        // check whether the state object is in tree
+                                        setState(() {
+                                          signinError =
+                                              "Please register first.";
+                                          loading = false;
+                                        });
+                                      }
+                                    } else {
                                       setState(() {
-                                        signinError =
-                                            "An error occured. Please try again.";
                                         loading = false;
                                       });
+                                      Navigator.of(context).pushAndRemoveUntil(
+                                          MaterialPageRoute(
+                                              builder: (context) => Wrapper()),
+                                          (Route<dynamic> route) => false);
                                     }
                                     // else {
                                     //   print('signin else reached');
@@ -340,9 +354,7 @@ class _SignInState extends State<SignIn> {
                                     //   MaterialPageRoute(
                                     //       builder: (context) => Wrapper()),
                                     // );
-                                    setState(() {
-                                      loading = false;
-                                    });
+
                                     // }
                                   },
                                   child: Container(

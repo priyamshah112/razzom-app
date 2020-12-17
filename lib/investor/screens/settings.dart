@@ -3,6 +3,7 @@ import 'package:razzom/investor/screens/drawer.dart';
 import 'package:razzom/investor/screens/home.dart';
 import 'package:razzom/investor/screens/idashboard.dart';
 import 'package:razzom/razzom/shared/data/vars.dart';
+import 'package:razzom/razzom/shared/services/check_internet.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -10,6 +11,18 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+  void initState() {
+    super.initState();
+    checkInternet().checkConnection(context);
+    // DatabaseService(uid: uid).getBookmarks();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    checkInternet().listener.cancel();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

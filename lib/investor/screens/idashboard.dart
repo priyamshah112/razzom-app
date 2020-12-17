@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:razzom/accounts/screens/wrapper.dart';
 import 'package:razzom/accounts/services/auth.dart';
 import 'package:razzom/investor/screens/drawer.dart';
 import 'package:razzom/investor/screens/home.dart';
@@ -6,6 +7,7 @@ import 'package:razzom/investor/screens/update_profile.dart';
 import 'package:razzom/razzom/shared/data/lists.dart';
 import 'package:razzom/razzom/shared/data/vars.dart';
 import 'package:razzom/razzom/shared/screens/loader.dart';
+import 'package:razzom/razzom/shared/services/check_internet.dart';
 import 'package:razzom/razzom/shared/services/database.dart';
 
 class Idashboard extends StatefulWidget {
@@ -16,7 +18,14 @@ class Idashboard extends StatefulWidget {
 class _IdashboardState extends State<Idashboard> {
   void initState() {
     super.initState();
+    checkInternet().checkConnection(context);
     // DatabaseService(uid: uid).getUserData();
+  }
+
+  @override
+  void dispose() {
+    // checkInternet().listener.cancel();
+    super.dispose();
   }
 
   final AuthService _auth = AuthService();

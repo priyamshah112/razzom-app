@@ -28,7 +28,7 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
       // looping: widget.looping,
       showControls: true,
       allowedScreenSleep: false,
-      allowFullScreen: false,
+      allowFullScreen: true,
       // deviceOrientationsAfterFullScreen: [
       //   DeviceOrientation.landscapeRight,
       //   DeviceOrientation.landscapeLeft,
