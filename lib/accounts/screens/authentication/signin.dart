@@ -334,6 +334,7 @@ class _SignInState extends State<SignIn> {
                                       InkWell(
                                         onTap: () async {
                                           setState(() {
+                                            signinError = "";
                                             loading = true;
                                           });
                                           dynamic result =
