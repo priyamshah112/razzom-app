@@ -535,7 +535,7 @@ class DatabaseService {
 
   Future updateViewsCount(String videoUrl) async {
     print("reached update views count");
-    // to call from video player "play" function
+    // to call from video player "play" function - line 301 in video_player.dart
     // await DatabaseService(uid: uid).updateViewsCount(this.dataSource.toString());
     print(videoUrl);
     var videoData = await videosCollection
