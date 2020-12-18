@@ -317,4 +317,8 @@ class _SettingsState extends State<Settings> {
       ),
     );
   }
+
+  refresh() {
+    setState(() {});
+  }
 }

@@ -6,6 +6,7 @@ import 'package:razzom/investor/screens/home.dart';
 import 'package:razzom/investor/screens/idashboard.dart';
 import 'package:razzom/razzom/shared/data/vars.dart';
 import 'package:razzom/razzom/shared/screens/loader.dart';
+import 'package:razzom/razzom/shared/screens/no_internet.dart';
 import 'package:razzom/razzom/shared/services/check_internet.dart';
 import 'package:razzom/razzom/shared/services/database.dart';
 import 'package:video_player/video_player.dart';
@@ -24,8 +25,8 @@ class _BookmarksState extends State<Bookmarks> {
 
   @override
   void dispose() {
-    super.dispose();
     checkInternet().listener.cancel();
+    super.dispose();
   }
 
   @override
@@ -96,54 +97,63 @@ class _BookmarksState extends State<Bookmarks> {
             ),
             Expanded(
               flex: 90,
-              child: FutureBuilder(
-                future: DatabaseService(uid: uid).getBookmarks(),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.hasData) {
-                    return Container(
-                      color: Color(0xFF0C1A24),
-                      width: MediaQuery.of(context).copyWith().size.width *
-                          (100 / 100),
-                      // height: MediaQuery.of(context).copyWith().size.height *
-                      //         (100 / 100) -
-                      //     169,
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
-                        child: (bookmarks.length == 0)
-                            ? Padding(
-                                padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                child: Text(
-                                  'No bookmarks yet!',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 18),
-                                  textAlign: TextAlign.center,
-                                ),
-                              )
-                            : ListView.builder(
-                                itemCount: bookmarks.length,
-                                itemBuilder: (context, i) {
-                                  return BookmarkCard(index: i);
-                                },
-                              ),
-                      ),
-                    );
-                  } else {
-                    return Container(
-                      color: Color(0xFF0C1A24),
-                      width: MediaQuery.of(context).copyWith().size.width *
-                          (100 / 100),
-                      // height: MediaQuery.of(context).copyWith().size.height *
-                      //         (100 / 100) -
-                      //     169,
-                      child: Loader(),
-                    );
-                  }
-                },
-              ),
+              child: internetAvailable
+                  ? FutureBuilder(
+                      future: DatabaseService(uid: uid).getBookmarks(),
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.hasData) {
+                          return Container(
+                            color: Color(0xFF0C1A24),
+                            width:
+                                MediaQuery.of(context).copyWith().size.width *
+                                    (100 / 100),
+                            // height: MediaQuery.of(context).copyWith().size.height *
+                            //         (100 / 100) -
+                            //     169,
+                            child: Padding(
+                              padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+                              child: (bookmarks.length == 0)
+                                  ? Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          0, 10, 0, 0),
+                                      child: Text(
+                                        'No bookmarks yet!',
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 18),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    )
+                                  : ListView.builder(
+                                      itemCount: bookmarks.length,
+                                      itemBuilder: (context, i) {
+                                        return BookmarkCard(index: i);
+                                      },
+                                    ),
+                            ),
+                          );
+                        } else {
+                          return Container(
+                            color: Color(0xFF0C1A24),
+                            width:
+                                MediaQuery.of(context).copyWith().size.width *
+                                    (100 / 100),
+                            // height: MediaQuery.of(context).copyWith().size.height *
+                            //         (100 / 100) -
+                            //     169,
+                            child: Loader(),
+                          );
+                        }
+                      },
+                    )
+                  : NoInternet(notifyParent: refresh),
             ),
           ],
         ),
       ),
     );
+  }
+
+  refresh() {
+    setState(() {});
   }
 }

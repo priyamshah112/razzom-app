@@ -26,6 +26,8 @@ class DatabaseService {
       FirebaseFirestore.instance.collection('videos');
   final CollectionReference paymentCollection =
       FirebaseFirestore.instance.collection('payment');
+  final CollectionReference videoViewsCollection =
+      FirebaseFirestore.instance.collection('video_views');
 
   Future createUserData(CustomUser user) async {
     print("reached db start");
@@ -529,5 +531,44 @@ class DatabaseService {
         'status': "paid",
       },
     }, SetOptions(merge: true));
+  }
+
+  Future updateViewsCount(String videoUrl) async {
+    print("reached update views count");
+    // to call from video player "play" function
+    // await DatabaseService(uid: uid).updateViewsCount(this.dataSource.toString());
+    print(videoUrl);
+    var videoData = await videosCollection
+        .where('url', isEqualTo: videoUrl)
+        .where('is_deleted', isEqualTo: false)
+        .get();
+    if (videoData.docs.length != 0) {
+      String videoId = videoData.docs[0].id;
+      print("played: " + videoId);
+
+      if (currentUser.userType == "Investor") {
+        var date = new DateTime.now();
+        var videoViewsData = await videoViewsCollection
+            .where('video_id', isEqualTo: videoId)
+            .where('user_id', isEqualTo: uid)
+            .get();
+        if (videoViewsData.docs.length == 0) {
+          videoViewsCollection.doc().set({
+            'video_id': videoId,
+            'user_id': uid,
+            'created_on': date,
+            'is_deleted': false,
+            'deleted_on': null,
+            'updated_on': null,
+          });
+          int previousViews = videoData.docs[0].data()['views_count'];
+          int newViews = previousViews + 1;
+          videosCollection.doc(videoId).update({
+            'updated_on': date,
+            'views_count': newViews,
+          });
+        }
+      }
+    }
   }
 }
