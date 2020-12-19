@@ -69,7 +69,10 @@ class ConnectionCard extends StatelessWidget {
                         Column(
                           children: [
                             Text(
-                              connection['name'],
+                              (connection['name'] == null ||
+                                      connection['name'] == "")
+                                  ? "Name"
+                                  : connection['name'],
                               style: TextStyle(
                                   fontSize: 22,
                                   color: Colors.white,
@@ -80,7 +83,10 @@ class ConnectionCard extends StatelessWidget {
                             ),
                             Container(
                               child: Text(
-                                connection['industry'],
+                                (connection['industry'] == null ||
+                                        connection['industry'] == "")
+                                    ? "Industry"
+                                    : connection['industry'],
                                 style: TextStyle(
                                   fontSize: 20,
                                   color: Colors.white,
@@ -126,8 +132,10 @@ class ConnectionCard extends StatelessWidget {
                                 flex: 9,
                                 // child: InkWell(
                                 child: Text(
-                                  FUNDING_OPTIONS[
-                                      connection['funding_required']],
+                                  (connection['funding_required'] == null)
+                                      ? "Funding required"
+                                      : FUNDING_OPTIONS[
+                                          connection['funding_required']],
                                   style: TextStyle(
                                       fontSize: 18, color: Colors.white),
                                 ),
@@ -165,7 +173,10 @@ class ConnectionCard extends StatelessWidget {
                                 flex: 9,
                                 // child: InkWell(
                                 child: Text(
-                                  connection['email'],
+                                  (connection['email'] == null ||
+                                          connection['email'] == "")
+                                      ? "Email"
+                                      : connection['email'],
                                   style: TextStyle(
                                       fontSize: 18, color: Colors.white),
                                 ),
@@ -203,7 +214,10 @@ class ConnectionCard extends StatelessWidget {
                                 flex: 9,
                                 // child: InkWell(
                                 child: Text(
-                                  connection['phone_no'],
+                                  (connection['phone_no'] == null ||
+                                          connection['phone_no'] == "")
+                                      ? "Phone Number"
+                                      : connection['phone_no'],
                                   style: TextStyle(
                                       fontSize: 18, color: Colors.white),
                                 ),
@@ -248,7 +262,10 @@ class ConnectionCard extends StatelessWidget {
                                 flex: 9,
                                 // child: InkWell(
                                 child: Text(
-                                  connection['whatsapp_no'],
+                                  (connection['whatsapp_no'] == null ||
+                                          connection['whatsapp_no'] == "")
+                                      ? "Whatsapp Number"
+                                      : connection['whatsapp_no'],
                                   style: TextStyle(
                                       fontSize: 18, color: Colors.white),
                                 ),
@@ -295,9 +312,17 @@ class ConnectionCard extends StatelessWidget {
                                 flex: 9,
                                 child: Container(
                                   child: Text(
-                                    connection['location']['city'] +
-                                        ', ' +
-                                        connection['location']['country'],
+                                    (connection['location']['city'] == null ||
+                                            connection['location']['city'] ==
+                                                "" ||
+                                            connection['location']['country'] ==
+                                                null ||
+                                            connection['location']['country'] ==
+                                                "")
+                                        ? "City, Country"
+                                        : connection['location']['city'] +
+                                            ', ' +
+                                            connection['location']['country'],
                                     style: TextStyle(
                                         fontSize: 18, color: Colors.white),
                                   ),

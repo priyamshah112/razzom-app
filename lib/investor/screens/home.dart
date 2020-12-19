@@ -1,5 +1,11 @@
+import 'dart:convert';
+
 import 'package:flappy_search_bar/flappy_search_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:razzom/investor/screens/drawer.dart';
 import 'package:razzom/investor/screens/customVideoPlayer.dart';
 import 'package:razzom/investor/screens/idashboard.dart';
@@ -7,6 +13,8 @@ import 'package:razzom/investor/screens/videoCard.dart';
 import 'package:razzom/razzom/shared/data/lists.dart';
 import 'package:razzom/razzom/shared/data/vars.dart';
 import 'package:razzom/razzom/shared/screens/loader.dart';
+import 'package:razzom/razzom/shared/screens/no_internet.dart';
+import 'package:razzom/razzom/shared/services/check_internet.dart';
 import 'package:razzom/razzom/shared/services/database.dart';
 import 'package:video_player/video_player.dart';
 
@@ -16,8 +24,12 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  Razorpay _razorpay;
+  var options;
+
   void initState() {
     super.initState();
+    checkInternet().checkConnection(context);
     if (!searchResults) {
       fundingCheckboxes = {
         0: true,
@@ -35,9 +47,100 @@ class _HomeState extends State<Home> {
         4: true,
       };
       searchText = "";
+      _razorpay = Razorpay();
+      _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+      _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+      _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
     }
+  }
 
-    // DatabaseService(uid: uid).getVideos();
+  @override
+  void dispose() {
+    checkInternet().listener.cancel();
+    _razorpay.clear();
+    super.dispose();
+  }
+
+  Future openCheckout(int amount) async {
+    print("reached open checkout");
+    var order =
+        await generateOrderId(RAZORPAY_KEY, RAZORPAY_SECRET, amount * 100);
+    print("ORDER:" + order);
+
+    await DatabaseService(uid: uid).createPaymentDoc(order);
+
+    options = {
+      'key': 'rzp_test_Fh06M1SVtFZrFl',
+      'entity': 'order',
+      'amount': amount * 100,
+      'amount_due': amount * 100,
+      'amount_paid': 0,
+      "currency": "USD",
+      'name': 'Razzom',
+      'description': 'Connect Coins',
+      'prefill': {'contact': currentUser.phone, 'email': currentUser.email},
+      'external': {
+        'wallets': ['paytm']
+      }
+    };
+
+    try {
+      print("reached open checkout try");
+      _razorpay.open(options);
+    } catch (e) {
+      debugPrint(e);
+    }
+  }
+
+  Future<http.Response> createOrder(int amount) async {
+    var url = 'https://api.razorpay.com/v1/orders';
+    return await http.post(
+      url,
+      headers: <String, String>{
+        'Authorization': RAZORPAY_KEY + ':' + RAZORPAY_SECRET,
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({"amount": 50000, "currency": "INR"}),
+    );
+  }
+
+  Future<String> generateOrderId(String key, String secret, int amount) async {
+    var authn = 'Basic ' + base64Encode(utf8.encode('$key:$secret'));
+
+    var headers = {
+      'content-type': 'application/json',
+      'Authorization': authn,
+    };
+
+    var data = '{ "amount": $amount, "currency": "USD"}';
+
+    var res = await http.post('https://api.razorpay.com/v1/orders',
+        headers: headers, body: data);
+    // if (res.statusCode != 200)
+    //   throw Exception('http.post error: statusCode= ${res.statusCode}');
+    print('ORDER ID response => ${res.body}');
+
+    return res.body;
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) async {
+    await DatabaseService(uid: uid).updateConnectCoins(response, options);
+    await DatabaseService(uid: uid).updatePaymentDoc(options);
+    Fluttertoast.showToast(msg: "Payment successful", timeInSecForIosWeb: 6);
+    setState(() {
+      print("setting state");
+    });
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    Fluttertoast.showToast(
+        msg: "ERROR: " + response.code.toString() + " - " + response.message,
+        timeInSecForIosWeb: 6);
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    Fluttertoast.showToast(
+        msg: "EXTERNAL_WALLET: " + response.walletName, timeInSecForIosWeb: 6);
   }
 
   @override
@@ -73,216 +176,225 @@ class _HomeState extends State<Home> {
         ],
       ),
       drawer: CustomDrawer(),
-      body: FutureBuilder(
-          future: searchResults
-              ? doNothing()
-              : DatabaseService(uid: uid).getVideos(),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.hasData) {
-              return Container(
-                width:
-                    MediaQuery.of(context).copyWith().size.width * (100 / 100),
-                child: Column(
-                  children: [
-                    // Expanded(
-                    // flex: 12,
-                    // child:
-                    Container(
-                      width: MediaQuery.of(context).copyWith().size.width *
-                          (100 / 100),
-                      height: 60,
-                      alignment: Alignment.center,
-                      color: Color(0xFF162F42),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            flex: 12,
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.fromLTRB(20, 10, 10, 10),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    // padding: EdgeInsets.fromLTRB(20, 10, 10, 10),
-                                    padding: EdgeInsets.all(0),
-                                    child: Container(
-                                      height: 40,
-                                      child: TextFormField(
-                                        initialValue: searchText,
-                                        textAlignVertical:
-                                            TextAlignVertical.center,
-                                        decoration: InputDecoration(
-                                          hintText: 'Search',
-                                          contentPadding:
-                                              EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                          fillColor: Color(0xFFC5C6C7),
-                                          filled: true,
-                                          border: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: Color(0xFFC5C6C7),
+      body: internetAvailable
+          ? FutureBuilder(
+              future: searchResults
+                  ? doNothing()
+                  : DatabaseService(uid: uid).getVideos(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                  return Container(
+                    width: MediaQuery.of(context).copyWith().size.width *
+                        (100 / 100),
+                    child: Column(
+                      children: [
+                        // Expanded(
+                        // flex: 12,
+                        // child:
+                        Container(
+                          width: MediaQuery.of(context).copyWith().size.width *
+                              (100 / 100),
+                          height: 60,
+                          alignment: Alignment.center,
+                          color: Color(0xFF162F42),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                flex: 12,
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(20, 10, 10, 10),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        // padding: EdgeInsets.fromLTRB(20, 10, 10, 10),
+                                        padding: EdgeInsets.all(0),
+                                        child: Container(
+                                          height: 40,
+                                          child: TextFormField(
+                                            initialValue: searchText,
+                                            textAlignVertical:
+                                                TextAlignVertical.center,
+                                            decoration: InputDecoration(
+                                              hintText: 'Search',
+                                              contentPadding:
+                                                  EdgeInsets.fromLTRB(
+                                                      10, 0, 10, 0),
+                                              fillColor: Color(0xFFC5C6C7),
+                                              filled: true,
+                                              border: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: Color(0xFFC5C6C7),
+                                                ),
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                  const Radius.circular(20.0),
+                                                ),
+                                              ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: Color(0xFFC5C6C7),
+                                                ),
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                  const Radius.circular(20.0),
+                                                ),
+                                              ),
                                             ),
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                              const Radius.circular(20.0),
-                                            ),
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                              color: Color(0xFFC5C6C7),
-                                            ),
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                              const Radius.circular(20.0),
-                                            ),
+                                            onChanged: (text) {
+                                              searchResults = true;
+                                              searchText = text.toLowerCase();
+                                              print(searchText);
+                                              print(videos.length.toString());
+                                              setState(() {
+                                                videosToDisplay =
+                                                    videos.where((video) {
+                                                  // print('videos length: ' +
+                                                  //     videos.length.toString());
+                                                  var videoFunding =
+                                                      video.fundingRequired;
+                                                  var videoIndustry =
+                                                      video.industry;
+                                                  print(videoFunding);
+                                                  return (fundingCheckboxes[
+                                                              videoFunding] ==
+                                                          true &&
+                                                      industryCheckboxes[
+                                                              ENTREPRENEUR_TYPES
+                                                                  .indexOf(
+                                                                      videoIndustry)] ==
+                                                          true);
+                                                }).toList();
+                                                print(videosToDisplay.length);
+                                                // videosToDisplay.clear();
+                                                videosToDisplay =
+                                                    videosToDisplay
+                                                        .where((video) {
+                                                  // print('videos length: ' +
+                                                  //     videos.length.toString());
+                                                  var videoTitle =
+                                                      video.title.toLowerCase();
+                                                  // print(videoTitle);
+                                                  return videoTitle
+                                                      .contains(searchText);
+                                                }).toList();
+                                                // print(videosToDisplay.length);
+                                              });
+                                            },
                                           ),
                                         ),
-                                        onChanged: (text) {
-                                          searchResults = true;
-                                          searchText = text.toLowerCase();
-                                          print(searchText);
-                                          print(videos.length.toString());
-                                          setState(() {
-                                            videosToDisplay =
-                                                videos.where((video) {
-                                              // print('videos length: ' +
-                                              //     videos.length.toString());
-                                              var videoFunding =
-                                                  video.fundingRequired;
-                                              var videoIndustry =
-                                                  video.industry;
-                                              print(videoFunding);
-                                              return (fundingCheckboxes[
-                                                          videoFunding] ==
-                                                      true &&
-                                                  industryCheckboxes[
-                                                          ENTREPRENEUR_TYPES
-                                                              .indexOf(
-                                                                  videoIndustry)] ==
-                                                      true);
-                                            }).toList();
-                                            print(videosToDisplay.length);
-                                            // videosToDisplay.clear();
-                                            videosToDisplay =
-                                                videosToDisplay.where((video) {
-                                              // print('videos length: ' +
-                                              //     videos.length.toString());
-                                              var videoTitle =
-                                                  video.title.toLowerCase();
-                                              // print(videoTitle);
-                                              return videoTitle
-                                                  .contains(searchText);
-                                            }).toList();
-                                            // print(videosToDisplay.length);
-                                          });
-                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              // SizedBox(
+                              //   width: 8,
+                              // ),
+                              Expanded(
+                                flex: 2,
+                                child: InkWell(
+                                  child: Icon(
+                                    Icons.filter_alt,
+                                    color: Colors.white,
+                                    size: 40,
+                                  ),
+                                  onTap: showFilters,
+                                ),
+                              ),
+                              // SizedBox(
+                              //   width: 8,
+                              // ),
+                              Expanded(
+                                flex: 4,
+                                child: Row(
+                                  children: [
+                                    InkWell(
+                                      child: Image.asset(
+                                        'assets/images/coins.png',
+                                      ),
+                                      onTap: showBuyConnects,
+                                    ),
+                                    SizedBox(
+                                      width: 0,
+                                    ),
+                                    Text(
+                                      currentUser.connects.toString(),
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 25,
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                          // SizedBox(
-                          //   width: 8,
-                          // ),
-                          Expanded(
-                            flex: 2,
-                            child: InkWell(
-                              child: Icon(
-                                Icons.filter_alt,
-                                color: Colors.white,
-                                size: 40,
-                              ),
-                              onTap: showFilters,
-                            ),
-                          ),
-                          // SizedBox(
-                          //   width: 8,
-                          // ),
-                          Expanded(
-                            flex: 4,
-                            child: Row(
-                              children: [
-                                InkWell(
-                                  child: Image.asset(
-                                    'assets/images/coins.png',
-                                  ),
-                                  onTap: showBuyConnects,
-                                ),
-                                SizedBox(
-                                  width: 0,
-                                ),
-                                Text(
-                                  currentUser.connects.toString(),
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 25,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // ),
-                    Expanded(
-                      // flex: 88,
-                      child: Container(
-                        color: Color(0xFF0C1A24),
-                        width: MediaQuery.of(context).copyWith().size.width *
-                            (100 / 100),
-                        // height: MediaQuery.of(context).copyWith().size.height *
-                        //         (100 / 100) -
-                        //     169,
-                        child: Padding(
-                          padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
-                          // child: Text(
-                          //   "CONNECTIONS",
-                          //   style: TextStyle(
-                          //     color: Colors.white,
-                          //     fontSize: 18,
-                          //   ),
-                          // ),
-                          child: (videosToDisplay.length == 0)
-                              ? Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                  child: Text(
-                                    'No videos found!',
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 18),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                )
-                              : ListView.builder(
-                                  itemCount: videosToDisplay.length,
-                                  itemBuilder: (context, i) {
-                                    return VideoCard(index: i);
-                                    // return Text('i');
-                                  },
-                                ),
                         ),
-                      ),
+                        // ),
+                        Expanded(
+                          // flex: 88,
+                          child: Container(
+                            color: Color(0xFF0C1A24),
+                            width:
+                                MediaQuery.of(context).copyWith().size.width *
+                                    (100 / 100),
+                            // height: MediaQuery.of(context).copyWith().size.height *
+                            //         (100 / 100) -
+                            //     169,
+                            child: Padding(
+                              padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
+                              // child: Text(
+                              //   "CONNECTIONS",
+                              //   style: TextStyle(
+                              //     color: Colors.white,
+                              //     fontSize: 18,
+                              //   ),
+                              // ),
+                              child: (videosToDisplay.length == 0)
+                                  ? Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          0, 10, 0, 0),
+                                      child: Text(
+                                        'No videos found!',
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 18),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    )
+                                  : ListView.builder(
+                                      itemCount: videosToDisplay.length,
+                                      itemBuilder: (context, i) {
+                                        return VideoCard(index: i);
+                                        // return Text('i');
+                                      },
+                                    ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              );
-            } else {
-              return Container(
-                color: Color(0xFF0C1A24),
-                width:
-                    MediaQuery.of(context).copyWith().size.width * (100 / 100),
-                // height: MediaQuery.of(context).copyWith().size.height *
-                //         (100 / 100) -
-                //     169,
-                child: Loader(),
-              );
-            }
-          }),
+                  );
+                } else {
+                  return Container(
+                    color: Color(0xFF0C1A24),
+                    width: MediaQuery.of(context).copyWith().size.width *
+                        (100 / 100),
+                    // height: MediaQuery.of(context).copyWith().size.height *
+                    //         (100 / 100) -
+                    //     169,
+                    child: Loader(),
+                  );
+                }
+              })
+          : NoInternet(notifyParent: refresh),
     );
+  }
+
+  refresh() {
+    setState(() {});
   }
 
   showBuyConnects() {
@@ -336,8 +448,9 @@ class _HomeState extends State<Home> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        onPressed: () {
+                        onPressed: () async {
                           print("1 connect");
+                          await openCheckout(10);
                         },
                       ),
                     ),
@@ -367,8 +480,9 @@ class _HomeState extends State<Home> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        onPressed: () {
+                        onPressed: () async {
                           print("5 connect");
+                          await openCheckout(50);
                         },
                       ),
                     ),
@@ -398,8 +512,10 @@ class _HomeState extends State<Home> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        onPressed: () {
+                        onPressed: () async {
+                          Navigator.of(context).pop();
                           print("10 connect");
+                          await openCheckout(95);
                         },
                       ),
                     ),

@@ -114,11 +114,40 @@ class CustomDrawer extends StatelessWidget {
                     builder: (BuildContext context) {
                       // return object of type Dialog
                       return AlertDialog(
-                        title: new Text("Confirm Logout"),
-                        content: new Text("Are you sure you want to logout?"),
+                        title: new Text(
+                          "Confirm Logout",
+                          textAlign: TextAlign.center,
+                        ),
+                        titleTextStyle: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        backgroundColor: Color(0xFF162F42),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          side: BorderSide(
+                            color: Colors.white,
+                          ),
+                        ),
+                        content: new Text(
+                          "Are you sure you want to logout?",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
                         actions: <Widget>[
                           new FlatButton(
-                            child: new Text("Yes"),
+                            child: new Text(
+                              "Yes",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                              ),
+                            ),
                             onPressed: () async {
                               // await _auth.signOut();
                               await _auth.signOut().then((res) {
@@ -131,7 +160,13 @@ class CustomDrawer extends StatelessWidget {
                             },
                           ),
                           new FlatButton(
-                            child: new Text("No"),
+                            child: new Text(
+                              "No",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                              ),
+                            ),
                             onPressed: () {
                               Navigator.of(context).pop();
                             },

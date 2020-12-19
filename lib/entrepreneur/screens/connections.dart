@@ -4,6 +4,8 @@ import 'package:razzom/entrepreneur/screens/drawer.dart';
 import 'package:razzom/entrepreneur/screens/edashboard.dart';
 import 'package:razzom/razzom/shared/data/vars.dart';
 import 'package:razzom/razzom/shared/screens/loader.dart';
+import 'package:razzom/razzom/shared/screens/no_internet.dart';
+import 'package:razzom/razzom/shared/services/check_internet.dart';
 import 'package:razzom/razzom/shared/services/database.dart';
 
 class Connections extends StatefulWidget {
@@ -14,7 +16,14 @@ class Connections extends StatefulWidget {
 class _ConnectionsState extends State<Connections> {
   void initState() {
     super.initState();
+    checkInternet().checkConnection(context);
     // DatabaseService(uid: uid).getConnections();
+  }
+
+  @override
+  void dispose() {
+    checkInternet().listener.cancel();
+    super.dispose();
   }
 
   @override
@@ -73,68 +82,78 @@ class _ConnectionsState extends State<Connections> {
             ),
             Expanded(
               flex: 90,
-              child: FutureBuilder(
-                future: DatabaseService(uid: uid).getConnections(),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.hasData) {
-                    print("Back from data");
-                    return Container(
-                      color: Color(0xFF0C1A24),
-                      width: MediaQuery.of(context).copyWith().size.width *
-                          (100 / 100),
-                      // height: MediaQuery.of(context).copyWith().size.height *
-                      //         (100 / 100) -
-                      //     169,
-                      // child: SingleChildScrollView(
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
-                        child: (connections.length == 0)
-                            ? Padding(
-                                padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      'No connections yet!',
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 18),
-                                      textAlign: TextAlign.center,
+              child: internetAvailable
+                  ? FutureBuilder(
+                      future: DatabaseService(uid: uid).getConnections(),
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.hasData) {
+                          print("Back from data");
+                          return Container(
+                            color: Color(0xFF0C1A24),
+                            width:
+                                MediaQuery.of(context).copyWith().size.width *
+                                    (100 / 100),
+                            // height: MediaQuery.of(context).copyWith().size.height *
+                            //         (100 / 100) -
+                            //     169,
+                            // child: SingleChildScrollView(
+                            child: Padding(
+                              padding: EdgeInsets.fromLTRB(30, 20, 30, 20),
+                              child: (connections.length == 0)
+                                  ? Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          0, 10, 0, 0),
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            'No connections yet!',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 18),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          SizedBox(height: 20),
+                                          // ConnectionCard(
+                                          //   index: 0,
+                                          // ),
+                                          // ConnectionCard(
+                                          //   index: 1,
+                                          // ),
+                                        ],
+                                      ),
+                                    )
+                                  : ListView.builder(
+                                      itemCount: connections.length,
+                                      itemBuilder: (context, i) {
+                                        return ConnectionCard(index: i);
+                                      },
                                     ),
-                                    SizedBox(height: 20),
-                                    // ConnectionCard(
-                                    //   index: 0,
-                                    // ),
-                                    // ConnectionCard(
-                                    //   index: 1,
-                                    // ),
-                                  ],
-                                ),
-                              )
-                            : ListView.builder(
-                                itemCount: connections.length,
-                                itemBuilder: (context, i) {
-                                  return ConnectionCard(index: i);
-                                },
-                              ),
-                      ),
-                      // ),
-                    );
-                  } else {
-                    return Container(
-                      color: Color(0xFF0C1A24),
-                      width: MediaQuery.of(context).copyWith().size.width *
-                          (100 / 100),
-                      // height: MediaQuery.of(context).copyWith().size.height *
-                      //         (100 / 100) -
-                      // 169,
-                      child: Loader(),
-                    );
-                  }
-                },
-              ),
+                            ),
+                            // ),
+                          );
+                        } else {
+                          return Container(
+                            color: Color(0xFF0C1A24),
+                            width:
+                                MediaQuery.of(context).copyWith().size.width *
+                                    (100 / 100),
+                            // height: MediaQuery.of(context).copyWith().size.height *
+                            //         (100 / 100) -
+                            // 169,
+                            child: Loader(),
+                          );
+                        }
+                      },
+                    )
+                  : NoInternet(notifyParent: refresh),
             ),
           ],
         ),
       ),
     );
+  }
+
+  refresh() {
+    setState(() {});
   }
 }

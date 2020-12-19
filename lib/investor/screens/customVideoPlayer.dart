@@ -1,11 +1,14 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:razzom/razzom/shared/data/vars.dart';
+import 'package:razzom/razzom/shared/services/database.dart';
 import 'package:video_player/video_player.dart';
 
 class CustomVideoPlayer extends StatefulWidget {
   final VideoPlayerController videoPlayerController;
   final bool looping;
+  bool played = false;
   CustomVideoPlayer({
     @required this.videoPlayerController,
     this.looping,
@@ -28,7 +31,7 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
       // looping: widget.looping,
       showControls: true,
       allowedScreenSleep: false,
-      allowFullScreen: false,
+      allowFullScreen: true,
       // deviceOrientationsAfterFullScreen: [
       //   DeviceOrientation.landscapeRight,
       //   DeviceOrientation.landscapeLeft,
@@ -57,6 +60,19 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
     //     ]);
     //   }
     // });
+    widget.videoPlayerController.addListener(() async {
+      if (widget.videoPlayerController.value.isPlaying) {
+        if (!widget.played) {
+          widget.played = true;
+          print("PLAYED IN CVP" + DateTime.now().toString());
+          await DatabaseService(uid: uid).updateViewsCount(
+              widget.videoPlayerController.dataSource.toString());
+        }
+      }
+    });
+    // while (true) {
+
+    // }
   }
 
   @override

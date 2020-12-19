@@ -14,6 +14,8 @@ import 'package:razzom/entrepreneur/screens/edashboard.dart';
 import 'package:razzom/razzom/shared/data/lists.dart';
 import 'package:razzom/razzom/shared/data/vars.dart';
 import 'package:razzom/razzom/shared/screens/constants.dart';
+import 'package:razzom/razzom/shared/screens/no_internet.dart';
+import 'package:razzom/razzom/shared/services/check_internet.dart';
 import 'package:razzom/razzom/shared/services/database.dart';
 
 class UpdateProfile extends StatefulWidget {
@@ -39,6 +41,18 @@ class _UpdateProfileState extends State<UpdateProfile> {
   String description = currentUser.description;
 
   @override
+  void initState() {
+    super.initState();
+    checkInternet().checkConnection(context);
+  }
+
+  @override
+  void dispose() {
+    checkInternet().listener.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // if (loading) {
     //   return Loader();
@@ -59,280 +73,298 @@ class _UpdateProfileState extends State<UpdateProfile> {
       ),
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset('assets/images/logo.png'),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(8.0, 0, 0, 0),
-                    child: Column(
+        child: internetAvailable
+            ? SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          'razzom.com',
-                          style: TextStyle(
-                            color: Color(0xFF0CE5DF),
-                            fontSize: 45,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          'Connect.Empower.Grow.',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 20,
+                        Image.asset('assets/images/logo.png'),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(8.0, 0, 0, 0),
+                          child: Column(
+                            children: [
+                              Text(
+                                'razzom.com',
+                                style: TextStyle(
+                                  color: Color(0xFF0CE5DF),
+                                  fontSize: 45,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                'Connect.Empower.Grow.',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-                child: Form(
-                  key: _formKey,
-                  child: Container(
-                    alignment: Alignment.center,
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 16.0,
-                        ),
-                        // TextFormField(
-                        //   style: TextStyle(color: Colors.white),
-                        //   initialValue: currentUser.name,
-                        //   decoration:
-                        //       textInputDecoration.copyWith(hintText: 'Name'),
-                        //   validator: (val) => val.isEmpty ? 'Enter name' : null,
-                        //   onChanged: (val) {
-                        //     setState(() {
-                        //       name = val;
-                        //     });
-                        //   },
-                        //   textInputAction: TextInputAction.next,
-                        // ),
-                        // SizedBox(
-                        //   height: 16.0,
-                        // ),
-                        TextFormField(
-                          initialValue: currentUser.phone,
-                          style: TextStyle(color: Colors.white),
-                          decoration: textInputDecoration.copyWith(
-                            hintText: 'Phone Number',
-                          ),
-                          validator: (val) =>
-                              val.isEmpty ? 'Enter a valid phone number' : null,
-                          onChanged: (val) {
-                            setState(() {
-                              phone = val;
-                            });
-                          },
-                          textInputAction: TextInputAction.next,
-                        ),
-                        SizedBox(
-                          height: 16.0,
-                        ),
-                        TextFormField(
-                          initialValue: currentUser.whatsapp,
-                          style: TextStyle(color: Colors.white),
-                          decoration: textInputDecoration.copyWith(
-                              hintText: 'Whatsapp Number'),
-                          validator: (val) => val.isEmpty
-                              ? 'Enter a valid whatsapp number'
-                              : null,
-                          onChanged: (val) {
-                            setState(() {
-                              whatsapp = val;
-                            });
-                          },
-                          textInputAction: TextInputAction.next,
-                        ),
-                        Visibility(
-                          visible: true,
-                          child: SizedBox(
-                            height: 16,
-                          ),
-                        ),
-                        Visibility(
-                          visible: true,
-                          child: Container(
-                            // width: 250,
-                            child: DropdownButtonFormField(
-                                value: currentUser.funding,
-                                isDense: true,
-                                hint: Text(
-                                  'Funding Required',
-                                  style: TextStyle(color: Colors.white),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                      child: Form(
+                        key: _formKey,
+                        child: Container(
+                          alignment: Alignment.center,
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 16.0,
+                              ),
+                              // TextFormField(
+                              //   style: TextStyle(color: Colors.white),
+                              //   initialValue: currentUser.name,
+                              //   decoration:
+                              //       textInputDecoration.copyWith(hintText: 'Name'),
+                              //   validator: (val) => val.isEmpty ? 'Enter name' : null,
+                              //   onChanged: (val) {
+                              //     setState(() {
+                              //       name = val;
+                              //     });
+                              //   },
+                              //   textInputAction: TextInputAction.next,
+                              // ),
+                              // SizedBox(
+                              //   height: 16.0,
+                              // ),
+                              TextFormField(
+                                initialValue: currentUser.phone,
+                                style: TextStyle(color: Colors.white),
+                                decoration: textInputDecoration.copyWith(
+                                  hintText: 'Phone Number',
                                 ),
-                                dropdownColor: Color(0xFF0C1A24),
-                                decoration: textInputDecoration,
-                                items: FUNDING_OPTIONS.map((funding) {
-                                  return DropdownMenuItem(
-                                    value: FUNDING_OPTIONS.indexOf(funding),
-                                    child: Text(
-                                      '$funding',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  );
-                                }).toList(),
+                                validator: (val) => val.isEmpty
+                                    ? 'Enter a valid phone number'
+                                    : null,
                                 onChanged: (val) {
                                   setState(() {
-                                    funding = val;
-                                    print(funding);
-                                    FocusScope.of(context)
-                                        .requestFocus(new FocusNode());
+                                    phone = val;
                                   });
-                                }),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 20.0,
-                        ),
-                        Visibility(
-                          visible: true,
-                          child: Container(
-                            width: MediaQuery.of(context).copyWith().size.width,
-                            child: FlatButton(
-                              padding: EdgeInsets.all(16),
-                              onPressed: () async {
-                                await uploadImage();
-                              },
-                              child: Text(
-                                'Choose Profile Picture',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              color: Color(0xFF0C1A24),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0),
-                                side: BorderSide(
-                                  color: Color(0xFF0C1A24),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Visibility(
-                          visible: imageError,
-                          child: SizedBox(
-                            height: 10.0,
-                          ),
-                        ),
-                        Visibility(
-                          visible: imageError,
-                          child: Text(
-                            imageErrorText,
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 10.0,
-                            ),
-                          ),
-                        ),
-                        Visibility(
-                          visible: fileUploaded | fileUploading,
-                          child: SizedBox(
-                            height: 8.0,
-                          ),
-                        ),
-                        Visibility(
-                          visible: fileUploading,
-                          child: Text('File uploading...Please wait!'),
-                        ),
-                        Visibility(
-                          visible: fileUploaded,
-                          child: Text('File Uploaded!'),
-                        ),
-                        // SizedBox(
-                        //   height: 20.0,
-                        // ),
-                        // TextFormField(
-                        //   initialValue: currentUser.description,
-                        //   keyboardType: TextInputType.multiline,
-                        //   maxLines: null,
-                        //   style: TextStyle(color: Colors.white),
-                        //   decoration: textInputDecoration.copyWith(
-                        //       hintText: 'Description'),
-                        //   onChanged: (val) {
-                        //     setState(() {
-                        //       description = val;
-                        //     });
-                        //   },
-                        //   textInputAction: TextInputAction.done,
-                        // ),
-                        SizedBox(
-                          height: 20.0,
-                        ),
-                        RaisedButton(
-                          color: Color(0xFF0CE5DF),
-                          disabledColor: Colors.grey,
-                          shape: fileUploading
-                              ? RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                  side: BorderSide(
-                                    color: Colors.grey,
-                                  ),
-                                )
-                              : RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12.0),
-                                  side: BorderSide(
-                                    color: Color(0xFF0CE5DF),
-                                  ),
-                                ),
-                          child: Text(
-                            'Update',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          onPressed: fileUploading
-                              ? null
-                              : () async {
-                                  // print(user);
-                                  if (_formKey.currentState.validate()) {
-                                    print("Validated");
-
-                                    await DatabaseService(uid: uid)
-                                        .updateUserData(
-                                            // name,
-                                            phone,
-                                            whatsapp,
-                                            funding,
-                                            profilePicUrl,
-                                            description);
-                                    dynamic result =
-                                        await DatabaseService(uid: uid)
-                                            .getUserData();
-                                    Navigator.of(context).pushAndRemoveUntil(
-                                        MaterialPageRoute(
-                                            builder: (context) => Edashboard()),
-                                        (Route<dynamic> route) => false);
-                                  }
                                 },
-                        ),
-                        SizedBox(
-                          height: 10.0,
-                        ),
-                        Text(
-                          error,
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 10.0,
+                                textInputAction: TextInputAction.next,
+                              ),
+                              SizedBox(
+                                height: 16.0,
+                              ),
+                              TextFormField(
+                                initialValue: currentUser.whatsapp,
+                                style: TextStyle(color: Colors.white),
+                                decoration: textInputDecoration.copyWith(
+                                    hintText: 'Whatsapp Number'),
+                                validator: (val) => val.isEmpty
+                                    ? 'Enter a valid whatsapp number'
+                                    : null,
+                                onChanged: (val) {
+                                  setState(() {
+                                    whatsapp = val;
+                                  });
+                                },
+                                textInputAction: TextInputAction.next,
+                              ),
+                              Visibility(
+                                visible: true,
+                                child: SizedBox(
+                                  height: 16,
+                                ),
+                              ),
+                              Visibility(
+                                visible: true,
+                                child: Container(
+                                  // width: 250,
+                                  child: DropdownButtonFormField(
+                                      value: currentUser.funding,
+                                      isDense: true,
+                                      hint: Text(
+                                        'Funding Required',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      dropdownColor: Color(0xFF0C1A24),
+                                      decoration: textInputDecoration,
+                                      items: FUNDING_OPTIONS.map((funding) {
+                                        return DropdownMenuItem(
+                                          value:
+                                              FUNDING_OPTIONS.indexOf(funding),
+                                          child: Text(
+                                            '$funding',
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        );
+                                      }).toList(),
+                                      onChanged: (val) {
+                                        setState(() {
+                                          funding = val;
+                                          print(funding);
+                                          FocusScope.of(context)
+                                              .requestFocus(new FocusNode());
+                                        });
+                                      }),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 20.0,
+                              ),
+                              Visibility(
+                                visible: true,
+                                child: Container(
+                                  width: MediaQuery.of(context)
+                                      .copyWith()
+                                      .size
+                                      .width,
+                                  child: FlatButton(
+                                    padding: EdgeInsets.all(16),
+                                    onPressed: () async {
+                                      await uploadImage();
+                                    },
+                                    child: Text(
+                                      'Choose Profile Picture',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    color: Color(0xFF0C1A24),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                      side: BorderSide(
+                                        color: Color(0xFF0C1A24),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Visibility(
+                                visible: imageError,
+                                child: SizedBox(
+                                  height: 10.0,
+                                ),
+                              ),
+                              Visibility(
+                                visible: imageError,
+                                child: Text(
+                                  imageErrorText,
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 10.0,
+                                  ),
+                                ),
+                              ),
+                              Visibility(
+                                visible: fileUploaded | fileUploading,
+                                child: SizedBox(
+                                  height: 8.0,
+                                ),
+                              ),
+                              Visibility(
+                                visible: fileUploading,
+                                child: Text('File uploading...Please wait!'),
+                              ),
+                              Visibility(
+                                visible: fileUploaded,
+                                child: Text('File Uploaded!'),
+                              ),
+                              // SizedBox(
+                              //   height: 20.0,
+                              // ),
+                              // TextFormField(
+                              //   initialValue: currentUser.description,
+                              //   keyboardType: TextInputType.multiline,
+                              //   maxLines: null,
+                              //   style: TextStyle(color: Colors.white),
+                              //   decoration: textInputDecoration.copyWith(
+                              //       hintText: 'Description'),
+                              //   onChanged: (val) {
+                              //     setState(() {
+                              //       description = val;
+                              //     });
+                              //   },
+                              //   textInputAction: TextInputAction.done,
+                              // ),
+                              SizedBox(
+                                height: 20.0,
+                              ),
+                              RaisedButton(
+                                color: Color(0xFF0CE5DF),
+                                disabledColor: Colors.grey,
+                                shape: fileUploading
+                                    ? RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(12.0),
+                                        side: BorderSide(
+                                          color: Colors.grey,
+                                        ),
+                                      )
+                                    : RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(12.0),
+                                        side: BorderSide(
+                                          color: Color(0xFF0CE5DF),
+                                        ),
+                                      ),
+                                child: Text(
+                                  'Update',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                onPressed: fileUploading
+                                    ? null
+                                    : () async {
+                                        // print(user);
+                                        if (_formKey.currentState.validate()) {
+                                          print("Validated");
+
+                                          await DatabaseService(uid: uid)
+                                              .updateUserData(
+                                                  // name,
+                                                  phone,
+                                                  whatsapp,
+                                                  funding,
+                                                  profilePicUrl,
+                                                  description);
+                                          dynamic result =
+                                              await DatabaseService(uid: uid)
+                                                  .getUserData();
+                                          Navigator.of(context)
+                                              .pushAndRemoveUntil(
+                                                  MaterialPageRoute(
+                                                      builder:
+                                                          (context) =>
+                                                              Edashboard()),
+                                                  (Route<dynamic> route) =>
+                                                      false);
+                                        }
+                                      },
+                              ),
+                              SizedBox(
+                                height: 10.0,
+                              ),
+                              Text(
+                                error,
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 10.0,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-        ),
+              )
+            : NoInternet(notifyParent: refresh),
       ),
     );
     // }
+  }
+
+  refresh() {
+    setState(() {});
   }
 
   uploadImage() async {

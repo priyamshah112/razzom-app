@@ -78,7 +78,10 @@ class _ConnectionCardState extends State<ConnectionCard> {
                         Column(
                           children: [
                             Text(
-                              connection['name'],
+                              (connection['name'] == null ||
+                                      connection['name'] == "")
+                                  ? "Name"
+                                  : connection['name'],
                               // 'name',
                               style: TextStyle(
                                   fontSize: 22,
@@ -90,7 +93,10 @@ class _ConnectionCardState extends State<ConnectionCard> {
                             ),
                             Container(
                               child: Text(
-                                connection['investor_type'],
+                                (connection['investor_type'] == null ||
+                                        connection['investor_type'] == "")
+                                    ? "Investor Type"
+                                    : connection['investor_type'],
                                 // "investor type",
                                 style: TextStyle(
                                   fontSize: 20,
@@ -137,7 +143,9 @@ class _ConnectionCardState extends State<ConnectionCard> {
                                 flex: 9,
                                 // child: InkWell(
                                 child: Text(
-                                  FUNDING_OPTIONS[connection['budget']],
+                                  (connection['budget'] == null)
+                                      ? "Funding Budget"
+                                      : FUNDING_OPTIONS[connection['budget']],
                                   // 'Budget',
                                   style: TextStyle(
                                       fontSize: 18, color: Colors.white),
@@ -176,7 +184,10 @@ class _ConnectionCardState extends State<ConnectionCard> {
                                 flex: 9,
                                 // child: InkWell(
                                 child: Text(
-                                  connection['email'],
+                                  (connection['email'] == null ||
+                                          connection['email'] == "")
+                                      ? "Email"
+                                      : connection['email'],
                                   // "email",
                                   style: TextStyle(
                                       fontSize: 18, color: Colors.white),
@@ -215,7 +226,10 @@ class _ConnectionCardState extends State<ConnectionCard> {
                                 flex: 9,
                                 // child: InkWell(
                                 child: Text(
-                                  connection['phone_no'],
+                                  (connection['phone_no'] == null ||
+                                          connection['phone_no'] == "")
+                                      ? "Phone Number"
+                                      : connection['phone_no'],
                                   // 'phone_no',
                                   style: TextStyle(
                                       fontSize: 18, color: Colors.white),
@@ -261,7 +275,10 @@ class _ConnectionCardState extends State<ConnectionCard> {
                                 flex: 9,
                                 // child: InkWell(
                                 child: Text(
-                                  connection['whatsapp_no'],
+                                  (connection['whatsapp_no'] == null ||
+                                          connection['whatsapp_no'] == "")
+                                      ? "Whatsapp Number"
+                                      : connection['whatsapp_no'],
                                   // 'whatsapp_no',
                                   style: TextStyle(
                                       fontSize: 18, color: Colors.white),
@@ -309,9 +326,18 @@ class _ConnectionCardState extends State<ConnectionCard> {
                                 flex: 9,
                                 child: Container(
                                   child: Text(
-                                    connection['location']['city'] +
-                                        ', ' +
-                                        connection['location']['country'],
+                                    (connection['location']['city'] == null ||
+                                            connection['location']['city'] ==
+                                                "" ||
+                                            connection['location']['country'] ==
+                                                null ||
+                                            connection['location']['country'] ==
+                                                "")
+                                        ? "City, Country"
+                                        : connection['location']['city'] +
+                                            ', ' +
+                                            connection['location']['country'],
+
                                     // "Country, City",
                                     style: TextStyle(
                                         fontSize: 18, color: Colors.white),
@@ -321,47 +347,56 @@ class _ConnectionCardState extends State<ConnectionCard> {
                             ],
                           ),
                         ),
-                        SizedBox(
-                          height: 8,
+                        Visibility(
+                          visible: (connection['intro'] != ""),
+                          child: SizedBox(
+                            height: 8,
+                          ),
                         ),
-                        InkWell(
-                          child: Container(
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  flex: 1,
-                                  child: Icon(
-                                    Icons.description,
-                                    color: Colors.white,
-                                    size: 20,
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 6,
-                                ),
-                                Expanded(
-                                  flex: 9,
-                                  child: Container(
-                                    child: Text(
-                                      (showBio)
-                                          ? "Click here to hide bio"
-                                          : "Click here to view bio",
-                                      style: TextStyle(
-                                          fontSize: 18, color: Colors.white),
+                        Visibility(
+                          visible: (connection['intro'] != ""),
+                          child: InkWell(
+                            child: Container(
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: Icon(
+                                      Icons.description,
+                                      color: Colors.white,
+                                      size: 20,
                                     ),
                                   ),
-                                ),
-                              ],
+                                  SizedBox(
+                                    width: 6,
+                                  ),
+                                  Expanded(
+                                    flex: 9,
+                                    child: Container(
+                                      child: Text(
+                                        (showBio)
+                                            ? "Click here to hide bio"
+                                            : "Click here to view bio",
+                                        style: TextStyle(
+                                            fontSize: 18, color: Colors.white),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
+                            onTap: () {
+                              setState(() {
+                                showBio = !showBio;
+                              });
+                            },
                           ),
-                          onTap: () {
-                            setState(() {
-                              showBio = !showBio;
-                            });
-                          },
                         ),
-                        SizedBox(
-                          height: 12,
+                        Visibility(
+                          visible: showBio,
+                          child: SizedBox(
+                            height: 12,
+                          ),
                         ),
                         Visibility(
                           visible: showBio,

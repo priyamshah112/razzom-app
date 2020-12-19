@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:razzom/accounts/services/auth.dart';
 import 'package:razzom/razzom/models/customBookmark.dart';
 import 'package:razzom/razzom/models/customUser.dart';
 import 'package:razzom/razzom/models/customVideo.dart';
@@ -7,6 +10,7 @@ import 'package:razzom/razzom/shared/data/vars.dart';
 class DatabaseService {
   final String uid;
   DatabaseService({this.uid});
+  final AuthService _auth = AuthService();
 
   final CollectionReference userCollection =
       FirebaseFirestore.instance.collection('users');
@@ -20,6 +24,10 @@ class DatabaseService {
       FirebaseFirestore.instance.collection('investor_video_bookmark');
   final CollectionReference videosCollection =
       FirebaseFirestore.instance.collection('videos');
+  final CollectionReference paymentCollection =
+      FirebaseFirestore.instance.collection('payment');
+  final CollectionReference videoViewsCollection =
+      FirebaseFirestore.instance.collection('video_views');
 
   Future createUserData(CustomUser user) async {
     print("reached db start");
@@ -79,6 +87,13 @@ class DatabaseService {
     }
   }
 
+  Future updateLastLogin() async {
+    var date = new DateTime.now();
+    await userCollection.doc(uid).update({
+      'last_login': date,
+    });
+  }
+
   Future updateUserData(String phone, String whatsapp, int funding,
       String profilePicUrl, String description) async {
     print("reached db update");
@@ -129,6 +144,9 @@ class DatabaseService {
 
   Future getUserData() async {
     print('get user data called');
+    bool userExistsInDb = await checkUserInDb(currentUser.email);
+
+    // if (userExistsInDb) {
     if (currentUser.userType == "Entrepreneur") {
       print("Entrepreneur DB");
       var userData = await entrepreneurCollection.doc(uid).get();
@@ -164,6 +182,16 @@ class DatabaseService {
       print(currentUser.profilePicUrl);
       return 'Done';
     }
+    // } else {
+    //   await _auth.signOut().then((res) {
+    //     showSignIn = true;
+    //     // signedOut = true;
+    //     // Navigator.of(context).pushAndRemoveUntil(
+    //     //     MaterialPageRoute(builder: (context) => Authentication()),
+    //     //     (Route<dynamic> route) => false);
+    //   });
+    //   return "User Blocked";
+    // }
   }
 
   Future getConnections() async {
@@ -287,9 +315,12 @@ class DatabaseService {
           .where('entrepreneur_id', isEqualTo: bookmark['entrepreneur_id'])
           .where('is_deleted', isEqualTo: false)
           .get();
+      var entrepreneur;
       if (connection.docs.length == 1) {
         // print('connection: ' + connection.docs[0].data().toString());
         isConnected = true;
+        entrepreneur =
+            await entrepreneurCollection.doc(bookmark['entrepreneur_id']).get();
         // connectionId = connection.docs[0].id;
       }
 
@@ -299,17 +330,19 @@ class DatabaseService {
           bookmark['video_title'],
           bookmark['video_url'],
           isConnected,
-          bookmark['entrepreneur_id']);
+          bookmark['entrepreneur_id'],
+          entrepreneur['funding_required'],
+          entrepreneur['industry']);
       bookmarks.add(bm);
 
       // if (!bookmark['is_deleted']) {
       //   bookmarks.add(bookmark);
       //   print('bookmark added: ' + bookmark.data().toString());
       // }
-      // print(bookmark.data());
+      // print(bookmark.data()['id']);
       // print(connection);
     }
-    print(bookmarks);
+    // print(bookmarks);
     return 'Done';
   }
 
@@ -430,5 +463,112 @@ class DatabaseService {
       'connects_avail': currentUser.connects - 1,
       'updated_on': date,
     });
+  }
+
+  updateConnectCoins(var response, var options) async {
+    print("reached update connect coins");
+    print('amount' + options['amount'].toString());
+    int amount = options['amount'];
+    int connects = 0;
+    if (amount == 1000) {
+      connects = 1;
+    } else if (amount == 5000) {
+      connects = 5;
+    } else if (amount == 9500) {
+      connects = 10;
+    }
+    var date = new DateTime.now();
+    await investorCollection.doc(uid).update({
+      'connects_avail': currentUser.connects + connects,
+      'updated_on': date,
+    });
+  }
+
+  Future checkUserInDb(String email) async {
+    final CollectionReference userCollection =
+        FirebaseFirestore.instance.collection('users');
+
+    var user = await userCollection
+        .where('email', isEqualTo: email)
+        .where('is_deleted', isEqualTo: false)
+        .get();
+    if (user.docs.length == 0) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  Future createPaymentDoc(var order) async {
+    var date = new DateTime.now();
+    DocumentReference docRef = await paymentCollection.add({
+      'created_on': date,
+      'investor_id': uid,
+      'pay_initial_info': {
+        'amount': json.decode(order)['amount'],
+        'amount_due': json.decode(order)['amount_due'],
+        'amount_paid': json.decode(order)['amount_paid'],
+        'attempts': json.decode(order)['attempts'],
+        'created_at': json.decode(order)['created_at'],
+        'currency': json.decode(order)['currency'],
+        'entity': json.decode(order)['entity'],
+        'id': json.decode(order)['id'],
+        'notes': json.decode(order)['notes'],
+        'offer_id': json.decode(order)['offer_id'],
+        'receipt': json.decode(order)['receipt'],
+        'status': json.decode(order)['status'],
+      },
+    });
+    print(docRef.id);
+    paymentDocId = docRef.id;
+  }
+
+  Future updatePaymentDoc(var options) async {
+    paymentCollection.doc(paymentDocId).set({
+      'pay_initial_info': {
+        'amount_due': 0,
+        'amount_paid': options['amount'],
+        'status': "paid",
+      },
+    }, SetOptions(merge: true));
+  }
+
+  Future updateViewsCount(String videoUrl) async {
+    print("reached update views count");
+    print(videoUrl);
+    var videoData = await videosCollection
+        .where('url', isEqualTo: videoUrl)
+        .where('is_deleted', isEqualTo: false)
+        .get();
+    if (videoData.docs.length != 0) {
+      String videoId = videoData.docs[0].id;
+      print("played: " + videoId);
+
+      if (currentUser.userType == "Investor") {
+        var date = new DateTime.now();
+        print("reached played - investor");
+        var videoViewsData = await videoViewsCollection
+            .where('video_id', isEqualTo: videoId)
+            .where('user_id', isEqualTo: uid)
+            .get();
+        if (videoViewsData.docs.length == 0) {
+          print("reached played new doc");
+          videoViewsCollection.doc().set({
+            'video_id': videoId,
+            'user_id': uid,
+            'created_on': date,
+            'is_deleted': false,
+            'deleted_on': null,
+            'updated_on': null,
+          });
+          int previousViews = videoData.docs[0].data()['views_count'];
+          int newViews = previousViews + 1;
+          videosCollection.doc(videoId).update({
+            'updated_on': date,
+            'views_count': newViews,
+          });
+        }
+      }
+    }
   }
 }

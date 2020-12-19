@@ -7,6 +7,8 @@ import 'package:razzom/razzom/shared/screens/constants.dart';
 import 'package:razzom/razzom/shared/screens/loader.dart';
 import 'package:razzom/accounts/services/auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:razzom/razzom/shared/screens/no_internet.dart';
+import 'package:razzom/razzom/shared/services/check_internet.dart';
 
 class SignIn extends StatefulWidget {
   final Function toggleView;
@@ -27,11 +29,18 @@ class _SignInState extends State<SignIn> {
   @override
   void initState() {
     super.initState();
+    checkInternet().checkConnection(context);
     fToast = FToast();
     fToast.init(context);
     fToast2 = FToast();
     fToast2.init(context);
     loading = false;
+  }
+
+  @override
+  void dispose() {
+    checkInternet().listener.cancel();
+    super.dispose();
   }
 
   _showToast() {
@@ -125,246 +134,275 @@ class _SignInState extends State<SignIn> {
         ),
         body: Container(
           padding: EdgeInsets.symmetric(vertical: 30.0, horizontal: 30.0),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                      child: Column(
+          child: internetAvailable
+              ? SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Image.asset(
-                            'assets/images/logo2.png',
-                          ),
-                          Text(
-                            'razzom.com',
-                            style: TextStyle(
-                              color: Color(0xFF0CE5DF),
-                              fontSize: 50,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            'Connect.Empower.Grow.',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 22,
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            child: Column(
+                              children: [
+                                Image.asset(
+                                  'assets/images/logo2.png',
+                                ),
+                                Text(
+                                  'razzom.com',
+                                  style: TextStyle(
+                                    color: Color(0xFF0CE5DF),
+                                    fontSize: 50,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  'Connect.Empower.Grow.',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 22,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-                  child: Form(
-                    key: _formKey,
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            height: 16.0,
-                          ),
-                          TextFormField(
-                            style: TextStyle(color: Colors.white),
-                            decoration:
-                                textInputDecoration.copyWith(hintText: 'Email'),
-                            validator: (val) =>
-                                val.isEmpty ? 'Enter an email' : null,
-                            onChanged: (val) {
-                              setState(() {
-                                email = val;
-                              });
-                            },
-                            textInputAction: TextInputAction.next,
-                          ),
-                          SizedBox(
-                            height: 16.0,
-                          ),
-                          TextFormField(
-                            style: TextStyle(color: Colors.white),
-                            decoration: textInputDecoration.copyWith(
-                                hintText: 'Password'),
-                            validator: (val) =>
-                                val.isEmpty ? 'Enter a password' : null,
-                            obscureText: true,
-                            onChanged: (val) {
-                              setState(() {
-                                password = val;
-                              });
-                            },
-                            textInputAction: TextInputAction.done,
-                          ),
-                          SizedBox(
-                            height: 20.0,
-                          ),
-                          RaisedButton(
-                            color: Color(0xFF0CE5DF),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                              side: BorderSide(
-                                color: Color(0xFF0CE5DF),
-                              ),
-                            ),
-                            child: Text(
-                              'Sign In',
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            onPressed: () async {
-                              if (_formKey.currentState.validate()) {
-                                setState(() {
-                                  loading = true;
-                                  signinError = "";
-                                });
-                                dynamic result;
-                                try {
-                                  result =
-                                      await _auth.signInWithEmailAndPassword(
-                                          email, password);
-                                  print("signin");
-                                  if (result == null) {
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                        child: Form(
+                          key: _formKey,
+                          child: Container(
+                            alignment: Alignment.center,
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 16.0,
+                                ),
+                                TextFormField(
+                                  style: TextStyle(color: Colors.white),
+                                  decoration: textInputDecoration.copyWith(
+                                      hintText: 'Email'),
+                                  validator: (val) =>
+                                      val.isEmpty ? 'Enter an email' : null,
+                                  onChanged: (val) {
                                     setState(() {
-                                      signinError =
-                                          "Invalid Credentials. Please try again.";
-                                      loading = false;
+                                      email = val;
                                     });
-                                  } else {
-                                    print(result);
+                                  },
+                                  textInputAction: TextInputAction.next,
+                                ),
+                                SizedBox(
+                                  height: 16.0,
+                                ),
+                                TextFormField(
+                                  style: TextStyle(color: Colors.white),
+                                  decoration: textInputDecoration.copyWith(
+                                      hintText: 'Password'),
+                                  validator: (val) =>
+                                      val.isEmpty ? 'Enter a password' : null,
+                                  obscureText: true,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      password = val;
+                                    });
+                                  },
+                                  textInputAction: TextInputAction.done,
+                                ),
+                                SizedBox(
+                                  height: 20.0,
+                                ),
+                                RaisedButton(
+                                  color: Color(0xFF0CE5DF),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12.0),
+                                    side: BorderSide(
+                                      color: Color(0xFF0CE5DF),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'Sign In',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  onPressed: () async {
+                                    if (_formKey.currentState.validate()) {
+                                      setState(() {
+                                        loading = true;
+                                        signinError = "";
+                                      });
+                                      dynamic result;
+                                      try {
+                                        result = await _auth
+                                            .signInWithEmailAndPassword(
+                                                email, password);
+                                        print("signin");
+                                        if (result == null) {
+                                          setState(() {
+                                            signinError =
+                                                "Invalid Credentials. Please try again.";
+                                            loading = false;
+                                          });
+                                        } else {
+                                          print(result);
 
-                                    Navigator.of(context).pushAndRemoveUntil(
-                                        MaterialPageRoute(
-                                            builder: (context) => Wrapper()),
-                                        (Route<dynamic> route) => false);
-                                  }
-                                  // setState(() {
-                                  //   loading = false;
-                                  // });
-                                  // Navigator.of(context).pushAndRemoveUntil(
-                                  //     MaterialPageRoute(
-                                  //         builder: (context) => Idashboard()),
-                                  //     (Route<dynamic> route) => false);
-                                } catch (e) {
-                                  print(e);
-                                  setState(() {
-                                    signinError = e.toString();
-                                    loading = false;
-                                  });
-                                }
-                              }
-                            },
-                          ),
-                          Visibility(
-                            visible: !(signinError == ""),
-                            child: SizedBox(
-                              height: 10.0,
-                            ),
-                          ),
-                          Text(
-                            signinError,
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 10.0,
-                            ),
-                          ),
-                          FlatButton(
-                            onPressed: () {
-                              widget.toggleView();
-                            },
-                            child: RichText(
-                              text: TextSpan(
-                                text: 'Not a user? ',
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: 15),
-                                children: <TextSpan>[
-                                  TextSpan(
-                                    text: 'Sign Up',
+                                          Navigator.of(context)
+                                              .pushAndRemoveUntil(
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          Wrapper()),
+                                                  (Route<dynamic> route) =>
+                                                      false);
+                                        }
+                                        // setState(() {
+                                        //   loading = false;
+                                        // });
+                                        // Navigator.of(context).pushAndRemoveUntil(
+                                        //     MaterialPageRoute(
+                                        //         builder: (context) => Idashboard()),
+                                        //     (Route<dynamic> route) => false);
+                                      } catch (e) {
+                                        print(e);
+                                        if (this.mounted) {
+                                          setState(() {
+                                            signinError = e.toString();
+                                            loading = false;
+                                          });
+                                        }
+                                      }
+                                    }
+                                  },
+                                ),
+                                Visibility(
+                                  visible: !(signinError == ""),
+                                  child: SizedBox(
+                                    height: 10.0,
+                                  ),
+                                ),
+                                Text(
+                                  signinError,
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 10.0,
+                                  ),
+                                ),
+                                FlatButton(
+                                  onPressed: () {
+                                    widget.toggleView();
+                                  },
+                                  child: RichText(
+                                    text: TextSpan(
+                                      text: 'Not a user? ',
+                                      style: TextStyle(
+                                          color: Colors.black, fontSize: 15),
+                                      children: <TextSpan>[
+                                        TextSpan(
+                                          text: 'Sign Up',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        TextSpan(text: ' here.'),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                FlatButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ForgotPassword(),
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    'Forgot Password?',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  TextSpan(text: ' here.'),
-                                ],
-                              ),
-                            ),
-                          ),
-                          FlatButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ForgotPassword(),
                                 ),
-                              );
-                            },
-                            child: Text(
-                              'Forgot Password?',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                InkWell(
-                                  onTap: () async {
-                                    setState(() {
-                                      loading = true;
-                                    });
-                                    dynamic result =
-                                        await _auth.signInWithGoogle();
-                                    print("RESULT: " + result.toString());
-                                    if (result == null) {
-                                      setState(() {
-                                        signinError =
-                                            "An error occured. Please try again.";
-                                        loading = false;
-                                      });
-                                    }
-                                    // else {
-                                    //   print('signin else reached');
-                                    // Navigator.pushReplacement(
-                                    //   context,
-                                    //   MaterialPageRoute(
-                                    //       builder: (context) => Wrapper()),
-                                    // );
-                                    setState(() {
-                                      loading = false;
-                                    });
-                                    // }
-                                  },
-                                  child: Container(
-                                    child: Image.asset(
-                                      'assets/images/google.png',
-                                      scale: 2,
-                                    ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      InkWell(
+                                        onTap: () async {
+                                          setState(() {
+                                            signinError = "";
+                                            loading = true;
+                                          });
+                                          dynamic result =
+                                              await _auth.signInWithGoogle();
+                                          print("RESULT: " + result.toString());
+
+                                          // print("RESULT EMAIL: " +
+                                          //     result.profile['email']);
+
+                                          if (result == null) {
+                                            if (this.mounted) {
+                                              // check whether the state object is in tree
+                                              setState(() {
+                                                signinError =
+                                                    "Please register first.";
+                                                loading = false;
+                                              });
+                                            }
+                                          } else {
+                                            setState(() {
+                                              loading = false;
+                                            });
+                                            Navigator.of(context)
+                                                .pushAndRemoveUntil(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            Wrapper()),
+                                                    (Route<dynamic> route) =>
+                                                        false);
+                                          }
+                                          // else {
+                                          //   print('signin else reached');
+                                          // Navigator.pushReplacement(
+                                          //   context,
+                                          //   MaterialPageRoute(
+                                          //       builder: (context) => Wrapper()),
+                                          // );
+
+                                          // }
+                                        },
+                                        child: Container(
+                                          child: Image.asset(
+                                            'assets/images/google.png',
+                                            scale: 2,
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 10.0,
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                SizedBox(
-                                  height: 10.0,
-                                ),
+                                )
                               ],
                             ),
-                          )
-                        ],
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-          ),
+                )
+              : NoInternet(notifyParent: refresh),
         ),
       );
     }
+  }
+
+  refresh() {
+    setState(() {});
   }
 }
