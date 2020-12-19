@@ -95,7 +95,7 @@ class _BookmarkCardState extends State<BookmarkCard> {
                         videoPlayerController: VideoPlayerController.network(
                           bookmark.videoUrl,
                         ),
-                        looping: true,
+                        looping: false,
                       )
                     : Container(
                         width: MediaQuery.of(context).copyWith().size.width,

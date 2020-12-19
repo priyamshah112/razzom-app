@@ -36,7 +36,7 @@ class _VideoCardState extends State<VideoCard> {
                     ? CustomVideoPlayer(
                         videoPlayerController:
                             VideoPlayerController.network(video.url),
-                        looping: true,
+                        looping: false,
                       )
                     : Container(
                         width: MediaQuery.of(context).copyWith().size.width,

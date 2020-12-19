@@ -184,7 +184,7 @@ class _VideoPitchState extends State<VideoPitch> {
                                                     VideoPlayerController
                                                         .network(
                                                             pitchVideo['url']),
-                                                looping: true,
+                                                looping: false,
                                               )
                                             : Center(
                                                 child: Container(

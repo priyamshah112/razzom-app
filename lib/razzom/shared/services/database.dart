@@ -535,8 +535,6 @@ class DatabaseService {
 
   Future updateViewsCount(String videoUrl) async {
     print("reached update views count");
-    // to call from video player "play" function - line 301 in video_player.dart
-    // await DatabaseService(uid: uid).updateViewsCount(this.dataSource.toString());
     print(videoUrl);
     var videoData = await videosCollection
         .where('url', isEqualTo: videoUrl)
@@ -548,11 +546,13 @@ class DatabaseService {
 
       if (currentUser.userType == "Investor") {
         var date = new DateTime.now();
+        print("reached played - investor");
         var videoViewsData = await videoViewsCollection
             .where('video_id', isEqualTo: videoId)
             .where('user_id', isEqualTo: uid)
             .get();
         if (videoViewsData.docs.length == 0) {
+          print("reached played new doc");
           videoViewsCollection.doc().set({
             'video_id': videoId,
             'user_id': uid,
