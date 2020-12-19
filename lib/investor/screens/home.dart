@@ -431,7 +431,7 @@ class _HomeState extends State<Home> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(
-                      width: 180,
+                      width: 200,
                       child: RaisedButton(
                         color: Color(0xFF0CE5DF),
                         shape: RoundedRectangleBorder(
@@ -463,7 +463,7 @@ class _HomeState extends State<Home> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(
-                      width: 180,
+                      width: 200,
                       child: RaisedButton(
                         color: Color(0xFF0CE5DF),
                         shape: RoundedRectangleBorder(
@@ -495,7 +495,7 @@ class _HomeState extends State<Home> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(
-                      width: 180,
+                      width: 200,
                       child: RaisedButton(
                         color: Color(0xFF0CE5DF),
                         shape: RoundedRectangleBorder(
@@ -604,7 +604,7 @@ class _HomeState extends State<Home> {
                         //   height: 5,
                         // ),
                         Container(
-                          width: 200,
+                          width: 250,
                           height: 150,
                           child: ListView(
                             // padding: EdgeInsets.all(0),
@@ -621,7 +621,7 @@ class _HomeState extends State<Home> {
                                       FUNDING_OPTIONS[key],
                                       style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 15,
+                                        fontSize: 14,
                                       ),
                                     ),
                                     checkColor: Colors.white,

@@ -134,8 +134,7 @@ class _VideoPitchState extends State<VideoPitch> {
                                       //         .size
                                       //         .width *
                                       //     0.9,
-                                      padding:
-                                          EdgeInsets.fromLTRB(20, 0, 20, 0),
+                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
@@ -165,7 +164,7 @@ class _VideoPitchState extends State<VideoPitch> {
                                       ),
                                     ),
                                     SizedBox(
-                                      height: 16,
+                                      height: 8,
                                     ),
                                     Row(
                                       mainAxisAlignment:
@@ -186,46 +185,23 @@ class _VideoPitchState extends State<VideoPitch> {
                                                             pitchVideo['url']),
                                                 looping: false,
                                               )
-                                            : Center(
-                                                child: Container(
-                                                  color: Colors.grey,
-                                                  width: MediaQuery.of(context)
-                                                          .copyWith()
-                                                          .size
-                                                          .width *
-                                                      0.8,
-                                                  height: 200,
-                                                  child: Center(
-                                                    child: Text(
-                                                      'Cannot load video!',
-                                                      style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 18,
-                                                      ),
+                                            : Container(
+                                                width: MediaQuery.of(context)
+                                                    .copyWith()
+                                                    .size
+                                                    .width,
+                                                height: 200,
+                                                child: Center(
+                                                  child: Text(
+                                                    'Cannot load video!',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 16,
                                                     ),
+                                                    // textAlign: TextAlign.center,
                                                   ),
                                                 ),
                                               ),
-                                        Center(
-                                          child: Container(
-                                            color: Colors.grey,
-                                            width: MediaQuery.of(context)
-                                                    .copyWith()
-                                                    .size
-                                                    .width *
-                                                0.8,
-                                            height: 200,
-                                            child: Center(
-                                              child: Text(
-                                                'Cannot load video!',
-                                                style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 18,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
                                       ],
                                     ),
                                     Visibility(
