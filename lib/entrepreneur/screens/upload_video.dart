@@ -340,7 +340,9 @@ class _UploadVideoState extends State<UploadVideo> {
                                         textAlign: TextAlign.center,
                                         validator: (val) => val.isEmpty
                                             ? 'Enter a title'
-                                            : null,
+                                            : val.length > 50
+                                                ? 'Title can have maximum 50 characters'
+                                                : null,
                                         onChanged: (val) {
                                           title = val;
                                           print("title: " + title);

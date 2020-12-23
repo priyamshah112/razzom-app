@@ -44,6 +44,10 @@ class AuthService {
 
   // register with email and password
   Future registerWithEmailAndPassword(CustomUser user) async {
+    bool userExistsInDb = await checkUserInDb(user.email);
+    if (userExistsInDb) {
+      return "registered";
+    }
     try {
       print("reached registration");
       UserCredential result = await _auth.createUserWithEmailAndPassword(
@@ -109,7 +113,7 @@ class AuthService {
         var userCredential;
         // Once signed in, return the UserCredential
         try {
-         userCredential =
+          userCredential =
               await FirebaseAuth.instance.signInWithCredential(credential);
           print(userCredential.toString());
           // print("email: " + userCredential.user.email);
