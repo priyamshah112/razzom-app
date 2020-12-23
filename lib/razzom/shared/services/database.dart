@@ -306,6 +306,7 @@ class DatabaseService {
         .where('investor_id', isEqualTo: uid)
         .where('is_deleted', isEqualTo: false)
         .get();
+    // print(bookmarksData.toString());
     for (var i = 0; i < bookmarksData.size; i++) {
       var bookmark = bookmarksData.docs[i];
       bool isConnected = false;
@@ -315,14 +316,16 @@ class DatabaseService {
           .where('entrepreneur_id', isEqualTo: bookmark['entrepreneur_id'])
           .where('is_deleted', isEqualTo: false)
           .get();
-      var entrepreneur;
-      if (connection.docs.length == 1) {
+      var entrepreneur =
+          await entrepreneurCollection.doc(bookmark['entrepreneur_id']).get();
+      // print(entrepreneur.toString());
+      // print(bookmark['entrepreneur_id']);
+      if (connection.docs.length != 0) {
         // print('connection: ' + connection.docs[0].data().toString());
         isConnected = true;
-        entrepreneur =
-            await entrepreneurCollection.doc(bookmark['entrepreneur_id']).get();
         // connectionId = connection.docs[0].id;
       }
+      print(entrepreneur.toString());
 
       CustomBookmark bm = new CustomBookmark(
           bookmark.id,
