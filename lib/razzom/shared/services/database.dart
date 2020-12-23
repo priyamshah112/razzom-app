@@ -205,10 +205,10 @@ class DatabaseService {
         var investorId = connectionsData.docs[i].data()['investor_id'];
         var connection = await investorCollection.doc(investorId).get();
         print(connection.data().toString());
-        // if (!connection['is_deleted']) {
-        connections.add(connection);
-        print('connection added');
-        // }
+        if (!connection.data()['is_deleted']) {
+          connections.add(connection);
+          print('connection added: ');
+        }
       }
       print(connections);
       return 'Done';
@@ -216,14 +216,15 @@ class DatabaseService {
       var connectionsData = await connectionsCollection
           .where('investor_id', isEqualTo: uid)
           .get();
-      print("data received");
+      // print("data received: " + connectionsData.docs.toString());
       print(connectionsData.size);
       for (var i = 0; i < connectionsData.size; i++) {
+        // print("data received: " + connectionsData.docs[i].data().toString());
         var entrepreneurId = connectionsData.docs[i].data()['entrepreneur_id'];
         var connection = await entrepreneurCollection.doc(entrepreneurId).get();
-        if (!connection['is_deleted']) {
+        if (!connection.data()['is_deleted']) {
           connections.add(connection);
-          print('connection added');
+          print('connection added: ' + connection.data()['name'].toString());
         }
       }
       print(connections);

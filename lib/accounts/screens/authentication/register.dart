@@ -28,10 +28,15 @@ class _RegisterState extends State<Register> {
   bool userTypeSelected = false;
   bool otherSelected = false;
 
+  bool showPassword;
+  bool showConfirmPassword;
+
   @override
   void initState() {
     super.initState();
     checkInternet().checkConnection(context);
+    showPassword = false;
+    showConfirmPassword = false;
   }
 
   @override
@@ -200,11 +205,27 @@ class _RegisterState extends State<Register> {
                                 TextFormField(
                                   style: TextStyle(color: Colors.white),
                                   decoration: textInputDecoration.copyWith(
-                                      hintText: 'Password'),
+                                    hintText: 'Password',
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        // Based on passwordVisible state choose the icon
+                                        showPassword
+                                            ? Icons.visibility
+                                            : Icons.visibility_off,
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: () {
+                                        // Update the state i.e. toogle the state of passwordVisible variable
+                                        setState(() {
+                                          showPassword = !showPassword;
+                                        });
+                                      },
+                                    ),
+                                  ),
                                   validator: (val) => val.length < 6
                                       ? 'Enter an password 6+ characters long'
                                       : null,
-                                  obscureText: true,
+                                  obscureText: !showPassword,
                                   onChanged: (val) {
                                     setState(() {
                                       user.password = val;
@@ -218,11 +239,28 @@ class _RegisterState extends State<Register> {
                                 TextFormField(
                                   style: TextStyle(color: Colors.white),
                                   decoration: textInputDecoration.copyWith(
-                                      hintText: 'Confirm Password'),
+                                    hintText: 'Confirm Password',
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        // Based on passwordVisible state choose the icon
+                                        showConfirmPassword
+                                            ? Icons.visibility
+                                            : Icons.visibility_off,
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: () {
+                                        // Update the state i.e. toogle the state of passwordVisible variable
+                                        setState(() {
+                                          showConfirmPassword =
+                                              !showConfirmPassword;
+                                        });
+                                      },
+                                    ),
+                                  ),
                                   validator: (val) => user.password != val
                                       ? 'Passwords do not match'
                                       : null,
-                                  obscureText: true,
+                                  obscureText: !showConfirmPassword,
                                   onChanged: (val) {
                                     setState(() {
                                       user.confirmPassword = val;
@@ -632,7 +670,6 @@ class _RegisterState extends State<Register> {
                                         fontWeight: FontWeight.bold),
                                   ),
                                   onPressed: () async {
-                                    fromRegister = true;
                                     print(user);
                                     if (_formKey.currentState.validate()) {
                                       setState(() {
@@ -642,14 +679,12 @@ class _RegisterState extends State<Register> {
                                       dynamic result = await _auth
                                           .registerWithEmailAndPassword(user);
                                       print("RESULT: " + result.toString());
-                                      if (result == null) {
+                                      if (result == "registered") {
                                         setState(() {
-                                          registerError =
-                                              "Sign up failed. Please try again.";
-                                          loading = false;
-                                        });
-                                        await _auth.signOut().then((res) {
                                           showSignIn = true;
+                                          registerError =
+                                              "Email already registered. Please Sign In.";
+                                          loading = false;
                                           Navigator.of(context)
                                               .pushAndRemoveUntil(
                                                   MaterialPageRoute(
@@ -659,15 +694,40 @@ class _RegisterState extends State<Register> {
                                                   (Route<dynamic> route) =>
                                                       false);
                                         });
+                                      } else if (result == null) {
+                                        showSignIn = false;
+                                        setState(() {
+                                          registerError =
+                                              "Sign up failed. Please try again.";
+                                          loading = false;
+                                        });
+                                        await _auth.signOut().then((res) {
+                                          // showSignIn = true;
+                                          Navigator.of(context)
+                                              .pushAndRemoveUntil(
+                                                  MaterialPageRoute(
+                                                      builder:
+                                                          (context) =>
+                                                              Authentication()),
+                                                  (Route<dynamic> route) =>
+                                                      false);
+                                        });
+                                      } else {
+                                        showSignIn = true;
+                                        fromRegister = true;
+                                        loading = false;
+                                        // setState(() {
+                                        //   loading = false;
+                                        // });
+                                        Navigator.of(context)
+                                            .pushAndRemoveUntil(
+                                                MaterialPageRoute(
+                                                    builder:
+                                                        (context) =>
+                                                            Authentication()),
+                                                (Route<dynamic> route) =>
+                                                    false);
                                       }
-                                      // setState(() {
-                                      //   loading = false;
-                                      // });
-                                      Navigator.of(context).pushAndRemoveUntil(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  Authentication()),
-                                          (Route<dynamic> route) => false);
                                     }
                                   },
                                 ),

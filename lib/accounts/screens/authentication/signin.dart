@@ -22,6 +22,7 @@ class _SignInState extends State<SignIn> {
   final _formKey = GlobalKey<FormState>();
   String email = "";
   String password = "";
+  bool showPassword = false;
 
   FToast fToast;
   FToast fToast2;
@@ -35,6 +36,7 @@ class _SignInState extends State<SignIn> {
     fToast2 = FToast();
     fToast2.init(context);
     loading = false;
+    showPassword = false;
   }
 
   @override
@@ -198,10 +200,26 @@ class _SignInState extends State<SignIn> {
                                 TextFormField(
                                   style: TextStyle(color: Colors.white),
                                   decoration: textInputDecoration.copyWith(
-                                      hintText: 'Password'),
+                                    hintText: 'Password',
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        // Based on passwordVisible state choose the icon
+                                        showPassword
+                                            ? Icons.visibility
+                                            : Icons.visibility_off,
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: () {
+                                        // Update the state i.e. toogle the state of passwordVisible variable
+                                        setState(() {
+                                          showPassword = !showPassword;
+                                        });
+                                      },
+                                    ),
+                                  ),
                                   validator: (val) =>
                                       val.isEmpty ? 'Enter a password' : null,
-                                  obscureText: true,
+                                  obscureText: !showPassword,
                                   onChanged: (val) {
                                     setState(() {
                                       password = val;
