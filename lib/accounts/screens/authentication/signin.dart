@@ -253,10 +253,13 @@ class _SignInState extends State<SignIn> {
                                       });
                                       dynamic result;
                                       try {
+                                        print(email);
+                                        print(password);
                                         result = await _auth
                                             .signInWithEmailAndPassword(
                                                 email, password);
-                                        print("signin " + result);
+                                        print("result");
+                                        print(result);
                                         if (result == null) {
                                           setState(() {
                                             signinError =
@@ -290,6 +293,7 @@ class _SignInState extends State<SignIn> {
                                         //         builder: (context) => Idashboard()),
                                         //     (Route<dynamic> route) => false);
                                       } catch (e) {
+                                        print("signin bug");
                                         print(e);
                                         if (this.mounted) {
                                           setState(() {
