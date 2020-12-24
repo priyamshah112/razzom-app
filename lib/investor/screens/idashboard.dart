@@ -10,6 +10,7 @@ import 'package:razzom/razzom/shared/screens/loader.dart';
 import 'package:razzom/razzom/shared/screens/no_internet.dart';
 import 'package:razzom/razzom/shared/services/check_internet.dart';
 import 'package:razzom/razzom/shared/services/database.dart';
+import 'package:razzom/razzom/shared/services/firebase_messaging.dart';
 
 class Idashboard extends StatefulWidget {
   @override
@@ -279,6 +280,7 @@ class _IdashboardState extends State<Idashboard> {
                                 ),
                               ),
                             ),
+                            // MessagingWidget(),
                           ],
                         ),
                       ),

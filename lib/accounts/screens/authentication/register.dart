@@ -621,7 +621,7 @@ class _RegisterState extends State<Register> {
                                 Visibility(
                                   visible: investorOptions,
                                   child: Container(
-                                    // width: 250,
+                                    width: 250,
                                     child: DropdownButtonFormField(
                                         isDense: true,
                                         hint: Text(
@@ -712,7 +712,8 @@ class _RegisterState extends State<Register> {
                                                   (Route<dynamic> route) =>
                                                       false);
                                         });
-                                      } else {
+                                      } else if (result ==
+                                          "registration successful") {
                                         showSignIn = true;
                                         fromRegister = true;
                                         loading = false;

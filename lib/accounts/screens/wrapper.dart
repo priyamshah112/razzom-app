@@ -10,12 +10,23 @@ import 'package:razzom/razzom/shared/data/vars.dart';
 import 'package:razzom/razzom/shared/screens/loader.dart';
 import 'package:razzom/razzom/shared/services/database.dart';
 
-class Wrapper extends StatelessWidget {
+class Wrapper extends StatefulWidget {
+  @override
+  _WrapperState createState() => _WrapperState();
+}
+
+class _WrapperState extends State<Wrapper> {
+  var user;
+
+  @override
+  void initState() {
+    super.initState();
+    final user = Provider.of<User>(context);
+    print(user);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context, listen: false);
-    print("I am from wrapper");
-    print(user);
     // return home or auth
     if (user == null) {
       if (showInfoScreens) {
@@ -63,8 +74,4 @@ class Wrapper extends StatelessWidget {
       }
     }
   }
-
-  // getUserData() async {
-  //   await DatabaseService(uid: uid).getData();
-  // }
 }

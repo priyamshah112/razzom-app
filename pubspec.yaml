@@ -55,6 +55,7 @@ dependencies:
   curl: ^1.0.0
   http: ^0.12.2
   flutter_launcher_icons: ^0.8.1
+  firebase_messaging: ^7.0.3
 
 flutter_icons:
   android: "launcher_icon"
