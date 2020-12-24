@@ -22,6 +22,7 @@ class _WrapperState extends State<Wrapper> {
   void initState() {
     super.initState();
     final user = Provider.of<User>(context);
+    print("wrapper");
     print(user);
   }
 
@@ -41,7 +42,7 @@ class _WrapperState extends State<Wrapper> {
       if (user.emailVerified) {
         // loading = true;
         uid = user.uid;
-        print("uid is " + uid);
+        print("wrapper uid is " + uid);
         return FutureBuilder(
             future: DatabaseService(uid: uid).getInitialData(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
