@@ -263,16 +263,24 @@ class _SignInState extends State<SignIn> {
                                                 "Invalid Credentials. Please try again.";
                                             loading = false;
                                           });
+                                        } else if (result ==
+                                            "email not verified") {
+                                          setState(() {
+                                            signinError =
+                                                "Please verify email and try again.";
+                                            loading = false;
+                                          });
                                         } else {
                                           print(result);
-
-                                          Navigator.of(context)
-                                              .pushAndRemoveUntil(
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          Wrapper()),
-                                                  (Route<dynamic> route) =>
-                                                      false);
+                                          setState(() {
+                                            Navigator.of(context)
+                                                .pushAndRemoveUntil(
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            Wrapper()),
+                                                    (Route<dynamic> route) =>
+                                                        false);
+                                          });
                                         }
                                         // setState(() {
                                         //   loading = false;
