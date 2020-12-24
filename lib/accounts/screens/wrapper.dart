@@ -13,7 +13,8 @@ import 'package:razzom/razzom/shared/services/database.dart';
 class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context);
+    final user = Provider.of<User>(context, listen: false);
+    print("I am from wrapper");
     print(user);
     // return home or auth
     if (user == null) {

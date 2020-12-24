@@ -256,7 +256,7 @@ class _SignInState extends State<SignIn> {
                                         result = await _auth
                                             .signInWithEmailAndPassword(
                                                 email, password);
-                                        print("signin");
+                                        print("signin " + result);
                                         if (result == null) {
                                           setState(() {
                                             signinError =
