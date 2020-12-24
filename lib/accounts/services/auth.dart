@@ -31,11 +31,12 @@ class AuthService {
           await DatabaseService(uid: uid).updateLastLogin();
           return result.user;
         } else {
-          return null;
+          return "email not verified";
         }
       } on FirebaseAuthException catch (e) {
         print('Failed with error code: ${e.code}');
         print(e.message);
+        return null;
       }
     } else {
       return null;
@@ -58,15 +59,17 @@ class AuthService {
       try {
         await result.user.sendEmailVerification();
         print(result.user.uid);
+        return "registration successful";
       } catch (e) {
         print("An error occured while trying to send email verification");
         print(e.message);
+        return null;
       }
       // await signOut();
-      return null;
     } on FirebaseAuthException catch (e) {
       print('Failed with error code: ${e.code}');
       print(e.message);
+      return null;
     }
   }
 
