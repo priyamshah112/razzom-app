@@ -27,7 +27,7 @@ class Wrapper extends StatelessWidget {
       }
     } else {
       showInfoScreens = false;
-      if (user.emailVerified) {
+      // if (user.emailVerified) {
         // loading = true;
         uid = user.uid;
         print("wrapper uid is " + uid);
@@ -56,11 +56,11 @@ class Wrapper extends StatelessWidget {
         // });
         // print("Investor");
         // return Idashboard();
-      } else {
-        showSignIn = true;
-        print("Email not verified");
-        return Authentication();
-      }
+      // } else {
+      //   showSignIn = true;
+      //   print("Email not verified");
+      //   return Authentication();
+      // }
     }
   }
 
