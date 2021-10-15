@@ -35,3 +35,8 @@
 - Manage Subscription
 - Review Pitch Videos
 - View Support Tickets
+- Download Data for Analytics
+
+### Snippets
+
+1] ![](razzom.jpeg)
