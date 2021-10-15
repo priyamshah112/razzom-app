@@ -1,16 +1,37 @@
-# razzom
+# Razzom
 
-Razzom Mobile Application
+- Razzom is a platform for entrepreneurs to connect with investors by sharing a video of what their product does and solves.
+- The app codebase is built using Flutter and Firebase.
+- There are 3 personas: Admin, Investor and Entrepreneur.
 
-## Getting Started
+## Investor can
 
-This project is a starting point for a Flutter application.
+- Authenticate himself
+- Subscribe to a plan
+- View Entrepreneurial Ideas to Invest
+- Bookmark liked ideas
+- Quote a bid on interested idea
+- See the popularity of the idea
+- Contact the entrepreneur
+- Raise support ticket or read FAQ
+- Get notified for updates
+- Search Ideas based on Industries, Sectors, Investment requested, etc.
 
-A few resources to get you started if this is your first Flutter project:
+## Entrepreneur can
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+- Authenticate himself
+- Create a Idea Pitch
+- Submit for Review
+- Update contact details
+- View Investment offered
+- View Investor details from offered Investment
+- View popularity of idea
+- Raise support ticket or read FAQ
+- Get notified for updates
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## (Web Module) Admin can
+
+- Manage Users
+- Manage Subscription
+- Review Pitch Videos
+- View Support Tickets
